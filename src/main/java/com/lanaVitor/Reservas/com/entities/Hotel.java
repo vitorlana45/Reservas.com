@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.proxy.HibernateProxy;
 
 import java.util.Objects;
 
@@ -29,7 +28,6 @@ public class Hotel {
         Hotel hotel = (Hotel) o;
         return Objects.equals(id, hotel.id);
     }
-
     @Override
     public int hashCode() {
         return Objects.hash(id);

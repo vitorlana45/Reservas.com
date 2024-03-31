@@ -1,5 +1,6 @@
 package com.lanaVitor.Reservas.com.controllers;
 
+import com.lanaVitor.Reservas.com.dtos.LoginDTO;
 import com.lanaVitor.Reservas.com.dtos.UserDTO;
 import com.lanaVitor.Reservas.com.entities.User;
 import com.lanaVitor.Reservas.com.repositories.UserRepository;
@@ -32,5 +33,10 @@ public class UserController {
         return ResponseEntity.created(uri).body(dto);
     }
 
-
+    @PostMapping("/login")
+    public ResponseEntity<LoginDTO> login(@RequestBody LoginDTO data) {
+        boolean dto = service.login(data);
+        if (dto == true) return ResponseEntity.ok().build();
+        else return ResponseEntity.unprocessableEntity().build();
+    }
 }

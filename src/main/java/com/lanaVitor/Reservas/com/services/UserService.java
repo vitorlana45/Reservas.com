@@ -8,11 +8,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
-
+    private EmailService emailService;
     private final UserRepository repository;
 
     @Autowired
-    public UserService(UserRepository repository) {
+    public UserService(UserRepository repository, EmailService emailService) {
+        this.emailService = emailService;
         this.repository = repository;
     }
 
@@ -20,6 +21,7 @@ public class UserService {
     public UserDTO insert(UserDTO data) {
         User entity = new User(data);
         entity = repository.save(entity);
+        emailService.sendEmailText(entity.getEmail(), "Novo usuário cadastro", "Obrigado por efetuar o cadastro em nossa plataforma!");
         return new UserDTO(entity);
     }
 }

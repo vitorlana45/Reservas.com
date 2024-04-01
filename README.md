@@ -23,15 +23,15 @@ João é o dono de um pequeno Resort em uma cidade turística e está enfrentand
      - Após o login, o usuário deve ser redirecionado para a página principal.
 
 3. [ ] **Acesso a Hotéis Disponíveis:**
-   - Como usuário logado, desejo poder ver os hotéis disponíveis para reservar.
+   - Como usuário logado, desejo poder ver se o esort está disponíveis para reservar.
    - Critérios de Aceitação:
-     - Deve ser possível listar os hotéis disponíveis.
+     - Deve ser possível listar os quartos disponíveis.
      - Os hotéis devem ter informações como nome, localização e descrição.
 
 4. [ ] **Reserva de Hotel:**
-   - Como usuário logado, desejo poder fazer uma reserva em um hotel.
+   - Como usuário logado, desejo poder fazer uma reserva no resort.
    - Critérios de Aceitação:
-     - Deve ser possível selecionar um hotel para reserva.
+     - Deve ser possível selecionar uma reserva no resort.
      - O usuário deve fornecer a data da reserva e o número de quartos desejados.
      - O sistema deve calcular o valor da reserva.
      - Após a reserva, o usuário deve receber um comprovante.

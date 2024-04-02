@@ -32,4 +32,11 @@ public class Login {
         this.password = password;
         this.loginMoment = LocalDateTime.now();
     }
+
+    public Login(User entity) {
+        id = entity.getId();
+        email = entity.getEmail();
+        password = entity.getPassword();
+        loginMoment = LocalDateTime.now();
+    }
 }

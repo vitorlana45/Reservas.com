@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,7 +18,7 @@ import java.io.Serializable;
 @Entity(name = "tb_users")
 @Table(name = "tb_users")
 @EqualsAndHashCode(of = "id")
-public class User{
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,11 +27,14 @@ public class User{
     private String email;
     private String password;
 
-    public User (UserDTO entity){
+    public User(UserDTO entity) {
         id = entity.getId();
         name = entity.getName();
         email = entity.getEmail();
         password = entity.getPassword();
     }
+
+    @ManyToMany(mappedBy = "users")
+    private Set<Hotel> hotel = new HashSet<>();
 
 }

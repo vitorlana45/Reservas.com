@@ -13,14 +13,14 @@ public class EmailService {
     private JavaMailSender javaMailSender;
 
     @Value("${spring.mail.username}")
-    private String remetente;
+    private String sender;
 
-    public String sendEmailText(String user, String assunto, String message) {
+    public String sendEmailText(String user, String subject, String message) {
         try {
             SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-            simpleMailMessage.setFrom(remetente); // Usando o endereço configurado no application.properties
+            simpleMailMessage.setFrom(sender); // Usando o endereço configurado no application.properties
             simpleMailMessage.setTo(user); // Definindo o destinatário como o e-mail do usuário
-            simpleMailMessage.setSubject(assunto);
+            simpleMailMessage.setSubject(subject);
             simpleMailMessage.setText(message);
             javaMailSender.send(simpleMailMessage);
             return "Email enviado";

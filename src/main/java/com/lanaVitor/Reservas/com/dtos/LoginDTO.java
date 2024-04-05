@@ -5,6 +5,7 @@ import com.lanaVitor.Reservas.com.entities.Login;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Random;
 
 
 @Data
@@ -24,5 +25,4 @@ public class LoginDTO {
         password = entity.getPassword();
         this.loginMoment = LocalDateTime.now();
     }
-
 }

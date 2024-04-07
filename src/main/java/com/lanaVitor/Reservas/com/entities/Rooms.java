@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.Date;
 
 
 @NoArgsConstructor
@@ -22,7 +23,13 @@ public class Rooms implements Serializable {
     @Setter
     private Integer roomsNumber;
 
+    @Setter
+    private Date checkIn;
+    @Setter
+    private Date checkOut;
+
     @Getter
+    @Setter
     private boolean rented;
 
     @ManyToOne
@@ -33,10 +40,10 @@ public class Rooms implements Serializable {
 
     @ManyToOne
     @JsonIgnore
+    @Setter
     private User user;
 
     public boolean isAvailable() {
         return rented;
     }
-
 }

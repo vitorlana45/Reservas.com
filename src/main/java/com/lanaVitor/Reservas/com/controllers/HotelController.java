@@ -1,14 +1,10 @@
 package com.lanaVitor.Reservas.com.controllers;
 
-import com.lanaVitor.Reservas.com.dtos.HotelDTO;
-import com.lanaVitor.Reservas.com.dtos.HotelInfoDTO;
-import com.lanaVitor.Reservas.com.dtos.RoomsDTO;
-import com.lanaVitor.Reservas.com.entities.Hotel;
+import com.lanaVitor.Reservas.com.dtos.*;
 import com.lanaVitor.Reservas.com.entities.Rooms;
-import com.lanaVitor.Reservas.com.repositories.RoomsRepository;
 import com.lanaVitor.Reservas.com.services.HotelService;
 import com.lanaVitor.Reservas.com.services.RoomsService;
-import org.apache.coyote.Response;
+import com.lanaVitor.Reservas.com.services.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -51,4 +47,10 @@ public class HotelController {
         return ResponseEntity.ok().body(list);
     }
 
+    @PostMapping("/{id}/reserve")
+    public ResponseEntity <List<ResponseRentedRoom>> reserveRooms(@PathVariable Long id, @RequestBody ReserveRoomsRequestDTO requestDTO) {
+
+        List<ResponseRentedRoom> data = hotelService.reserveRooms(requestDTO, id, requestDTO);
+        return ResponseEntity.ok().body(data);
+    }
 }

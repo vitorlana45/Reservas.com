@@ -28,7 +28,7 @@ João é o dono de um pequeno Resort em uma cidade turística e está enfrentand
      - Deve ser possível listar os quartos disponíveis.
      - Os Resort deve ter informações como nome, localização e descrição.
 
-4. [ ] **Reserva de Hotel:**
+4. [x] **Reserva de Hotel:**
    - Como usuário logado, desejo poder fazer uma reserva no resort.
    - Critérios de Aceitação:
      - Deve ser possível selecionar uma reserva no resort.

@@ -47,5 +47,4 @@ public class Rooms implements Serializable {
         return rented;
     }
 
-
 }

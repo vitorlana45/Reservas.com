@@ -82,9 +82,19 @@ public class HotelService {
         Optional<Hotel> hotelOptional = repository.findById(hotelId);
         Hotel hotelEntity = hotelOptional.orElseThrow(() -> new ResourceNotFoundException("Hotel não encontrado"));
 
-        Rooms room = findAvailableRoom(hotelEntity, data.getReservationDTO().getNumberRoom());
-        if (room == null) {
-            throw new ResourceNotFoundException("Quarto não disponível para reserva.");
+        Rooms room = findAvailableRoomAndUpdateStatus(hotelEntity, data.getReservationDTO().getNumberRoom());
+
+        boolean allRoomsOccupied = checkAllRoomsOccupied(hotelEntity);
+        if (allRoomsOccupied) {
+            hotelEntity.setStatus("Cheio");
+            repository.save(hotelEntity);
+        } else {
+            hotelEntity.setStatus("Disponível");
+            repository.save(hotelEntity);
+        }
+
+        if (room == null){
+            throw new ResourceNotFoundException("Quarto indisponivel");
         }
 
         User entity = verificationUserExists(user.getUser());
@@ -94,6 +104,7 @@ public class HotelService {
         room.setRented(true);
 
         Rooms savedRoom = roomsRepository.save(room);
+
         if (savedRoom != null) {
             sendConfirmationEmail(data, user);
             return new ResponseRentedRoom(savedRoom);
@@ -102,19 +113,33 @@ public class HotelService {
         }
     }
 
-    private Rooms findAvailableRoom(Hotel hotel, Long roomId) {
-        return hotel.getListRooms().stream()
-                .filter(room -> room.getId().equals(roomId) && !room.isRented() && room.getUser() == null)
+    // Método para verificar se todos os quartos do hotel estão ocupados
+    private boolean checkAllRoomsOccupied(Hotel hotel) {
+        List<Rooms> rooms = hotel.getListRooms();
+        return rooms.stream().allMatch(Rooms::isRented);
+    }
+
+    // Método para encontrar um quarto disponível e atualizar o status do hotel
+    private Rooms findAvailableRoomAndUpdateStatus(Hotel hotel, Long roomId) {
+        List<Rooms> rooms = hotel.getListRooms();
+        Rooms room = rooms.stream()
+                .filter(r -> r.getId().equals(roomId) && !r.isRented() && r.getUser() == null)
                 .findFirst()
                 .orElse(null);
+
+        if (room != null) {
+            room.setRented(true);
+            return room;
+        }
+        return null;
     }
 
     public void sendConfirmationEmail(ReserveRoomsRequestDTO reservationData, ReserveRoomsRequestDTO userData) {
         String totalPrice = UtilService.calculateTotalPrice(reservationData.getReservationDTO().getCheckIn(), reservationData.getReservationDTO().getCheckOut());
-        User user =  verificationUserExists(userData.getUser());
-        if(user != null){
+        User user = verificationUserExists(userData.getUser());
+        if (user != null) {
             emailService.sendEmailText(userData.getUser().getEmail(), "Confirmação de reserva", totalPrice);
-        }else {
+        } else {
             throw new ResourceNotFoundException("para reservar um quarto e nescessario ter cadastro!");
         }
     }

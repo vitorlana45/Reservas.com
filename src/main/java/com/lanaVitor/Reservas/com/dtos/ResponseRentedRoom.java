@@ -14,11 +14,10 @@ import java.util.List;
 public class ResponseRentedRoom {
 
 
-    private List<Rooms> rooms;
+    private Rooms rooms;
 
-    public ResponseRentedRoom(List<Rooms> reservedForUser) {
-        this.rooms = new ArrayList<>();
-        this.rooms.addAll(reservedForUser);
+    public ResponseRentedRoom(Rooms reservedForUser) {
+        this.rooms = reservedForUser;
     }
 }
 

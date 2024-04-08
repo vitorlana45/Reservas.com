@@ -4,7 +4,6 @@ INSERT INTO tb_hotel (name, description, location) VALUES ('South Paradise', 'O 
 -- Inserir dados dos usuários
 INSERT INTO tb_users (name, email, password) VALUES ('Alex', 'alex@gmail.com', '2123');
 INSERT INTO tb_users (name, email, password) VALUES ('Angela', 'angela@gmail.com', '2123');
-INSERT INTO tb_users (name, email, password) VALUES ('Angela2', 'angela2@gmail.com', '2123');
 
 -- Associar usuários ao hotel
 INSERT INTO TB_HOTEL_USER (hotel_id, user_id) VALUES (1, 1);

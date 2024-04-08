@@ -19,7 +19,6 @@ import java.util.Optional;
 public class RoomsService {
     private final RoomsRepository repository;
 
-
     @Autowired
     public RoomsService(RoomsRepository repository) {
         this.repository = repository;

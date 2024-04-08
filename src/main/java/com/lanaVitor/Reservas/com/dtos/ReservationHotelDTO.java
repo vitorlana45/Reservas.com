@@ -14,6 +14,6 @@ import java.util.List;
 public class ReservationHotelDTO {
     private Date checkIn;
     private Date checkOut;
-    private List<Long> listReservation = new ArrayList<>();
+    private Long numberRoom ;
 
 }

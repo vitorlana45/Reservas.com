@@ -8,6 +8,9 @@ import com.lanaVitor.Reservas.com.repositories.HotelRepository;
 import com.lanaVitor.Reservas.com.repositories.RoomsRepository;
 import com.lanaVitor.Reservas.com.repositories.UserRepository;
 import com.lanaVitor.Reservas.com.services.exception.ResourceNotFoundException;
+import com.lanaVitor.Reservas.com.services.util.UtilService;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,11 +27,14 @@ public class HotelService {
 
     private RoomsRepository roomsRepository;
 
+    private EmailService emailService;
+
     @Autowired
-    public HotelService(HotelRepository repository, UserRepository userRepository, RoomsRepository roomsRepository) {
+    public HotelService(HotelRepository repository, UserRepository userRepository, RoomsRepository roomsRepository, EmailService emailService) {
         this.repository = repository;
         this.userRepositoy = userRepository;
         this.roomsRepository = roomsRepository;
+        this.emailService = emailService;
     }
 
     public HotelInfoDTO getInfoResort(Long id) {
@@ -71,46 +77,48 @@ public class HotelService {
         return availableRooms;
     }
 
-    public List<ResponseRentedRoom> reserveRooms(ReserveRoomsRequestDTO data, Long id, ReserveRoomsRequestDTO user) {
-        List<Long> recusedNumberRooms = new ArrayList<>();
-        Optional<Hotel> hotel = repository.findById(id);
-        Hotel hotelEntity = hotel.orElseThrow(() -> new RuntimeException("Hotel não encontrado"));
+    @Transactional
+    public ResponseRentedRoom reserveRoom(ReserveRoomsRequestDTO data, Long hotelId, ReserveRoomsRequestDTO user) {
+        Optional<Hotel> hotelOptional = repository.findById(hotelId);
+        Hotel hotelEntity = hotelOptional.orElseThrow(() -> new ResourceNotFoundException("Hotel não encontrado"));
 
-        List<Rooms> rooms = hotelEntity.getListRooms();
-        List<Rooms> availableRooms = new ArrayList<>();
-        List<Rooms> reservedForUser = new ArrayList<>();
-
-        for (Rooms room : rooms) {
-            if (!room.isAvailable() && room.getUser() == null) {
-                availableRooms.add(room);
-            }else {
-                recusedNumberRooms.add(room.getId());
-            }
+        Rooms room = findAvailableRoom(hotelEntity, data.getReservationDTO().getNumberRoom());
+        if (room == null) {
+            throw new ResourceNotFoundException("Quarto não disponível para reserva.");
         }
 
-        for (Rooms room : availableRooms) {
-            if (data.getReservationDTO() != null && data.getReservationDTO().getListReservation().contains(room.getId())) {
-                reservedForUser.add(room);
-                room.setCheckIn(data.getReservationDTO().getCheckIn());
-                room.setCheckOut(data.getReservationDTO().getCheckOut());
-                room.setRented(true);
-            }
-        }
         User entity = verificationUserExists(user.getUser());
-        for (Rooms reserve : reservedForUser) {
-            reserve.setUser(entity);
-        }
-        roomsRepository.saveAll(reservedForUser);
+        room.setUser(entity);
+        room.setCheckIn(data.getReservationDTO().getCheckIn());
+        room.setCheckOut(data.getReservationDTO().getCheckOut());
+        room.setRented(true);
 
-        // Verifica se há quartos reservados
-        if (!reservedForUser.isEmpty()) {
-            List<ResponseRentedRoom> list = new ArrayList<>();
-            list.add(new ResponseRentedRoom(reservedForUser));
-            return list;
+        Rooms savedRoom = roomsRepository.save(room);
+        if (savedRoom != null) {
+            sendConfirmationEmail(data, user);
+            return new ResponseRentedRoom(savedRoom);
         } else {
-            throw new ResourceNotFoundException("recurso nao encontrado!");
+            throw new RuntimeException("Erro ao salvar quarto reservado.");
         }
     }
+
+    private Rooms findAvailableRoom(Hotel hotel, Long roomId) {
+        return hotel.getListRooms().stream()
+                .filter(room -> room.getId().equals(roomId) && !room.isRented() && room.getUser() == null)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public void sendConfirmationEmail(ReserveRoomsRequestDTO reservationData, ReserveRoomsRequestDTO userData) {
+        String totalPrice = UtilService.calculateTotalPrice(reservationData.getReservationDTO().getCheckIn(), reservationData.getReservationDTO().getCheckOut());
+        User user =  verificationUserExists(userData.getUser());
+        if(user != null){
+            emailService.sendEmailText(userData.getUser().getEmail(), "Confirmação de reserva", totalPrice);
+        }else {
+            throw new ResourceNotFoundException("para reservar um quarto e nescessario ter cadastro!");
+        }
+    }
+
     private Hotel convertHotelDtoToHotel(HotelDTO data) {
         Hotel entity = new Hotel();
         entity.setName(data.getName());
@@ -119,14 +127,13 @@ public class HotelService {
         return entity;
     }
 
-
     private User verificationUserExists(VerificationRegisterDTO data) {
         try {
             User user = new User();
             user.setEmail(data.getEmail());
             return userRepositoy.findByEmail(user.getEmail());
         } catch (RuntimeException e) {
-            throw new RuntimeException("É nescessario ter cadastro para reservar um quarto");
+            throw new EntityNotFoundException("É nescessario ter cadastro para reservar um quarto");
         }
     }
 }

@@ -8,7 +8,7 @@ import lombok.*;
 import java.io.Serializable;
 import java.util.Date;
 
-
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -46,4 +46,6 @@ public class Rooms implements Serializable {
     public boolean isAvailable() {
         return rented;
     }
+
+
 }

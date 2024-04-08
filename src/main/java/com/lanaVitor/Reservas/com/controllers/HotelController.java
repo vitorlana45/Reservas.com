@@ -48,9 +48,9 @@ public class HotelController {
     }
 
     @PostMapping("/{id}/reserve")
-    public ResponseEntity <List<ResponseRentedRoom>> reserveRooms(@PathVariable Long id, @RequestBody ReserveRoomsRequestDTO requestDTO) {
+    public ResponseEntity <ResponseRentedRoom> reserveRooms(@PathVariable Long id, @RequestBody ReserveRoomsRequestDTO requestDTO) {
 
-        List<ResponseRentedRoom> data = hotelService.reserveRooms(requestDTO, id, requestDTO);
+        ResponseRentedRoom data = hotelService.reserveRoom(requestDTO, id, requestDTO);
         return ResponseEntity.ok().body(data);
     }
 }

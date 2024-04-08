@@ -22,8 +22,8 @@ João é o dono de um pequeno Resort em uma cidade turística e está enfrentand
      - Deve ser possível enviar e-mail e senha para fazer login.
      - [ ] Após o login, o usuário deve ser redirecionado para a página principal.
 
-3. [ ] **Acesso ao Resort se disponivel:**
-   - Como usuário logado, desejo poder ver se o resort está disponível para reservar.
+3. [x] **Acesso ao Resort se disponivel:**
+   - Como usuário, desejo poder ver se o resort está disponível para reservar.
    - Critérios de Aceitação:
      - Deve ser possível listar os quartos disponíveis.
      - Os Resort deve ter informações como nome, localização e descrição.

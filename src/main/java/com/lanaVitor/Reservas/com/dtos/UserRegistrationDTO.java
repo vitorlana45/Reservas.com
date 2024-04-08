@@ -6,25 +6,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class UserDTO {
-
+@Setter
+public class UserRegistrationDTO {
     private Long id;
-    @Setter
     private String name;
-    @Setter
     private String email;
-    private String password;
 
-    public UserDTO(User entity) {
-        id = entity.getId();
-        name = entity.getName();
-        email = entity.getEmail();
-        password = entity.getPassword();
+    public UserRegistrationDTO(User user){
+        id = user.getId();
+        name = user.getName();
+        email = user.getEmail();
     }
+
 }

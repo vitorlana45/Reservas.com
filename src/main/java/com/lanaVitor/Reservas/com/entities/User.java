@@ -1,6 +1,7 @@
 package com.lanaVitor.Reservas.com.entities;
 
 import com.lanaVitor.Reservas.com.dtos.UserDTO;
+import com.lanaVitor.Reservas.com.dtos.UserRegistrationDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -39,6 +40,12 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "rooms_id"))
     private List<Rooms> rooms;
+
+    public User (UserRegistrationDTO entity){
+        id = entity.getId();
+        name = entity.getName();
+        email = entity.getEmail();
+    }
 
     public User(UserDTO entity) {
         id = entity.getId();

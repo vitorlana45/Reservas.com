@@ -2,16 +2,16 @@ package com.lanaVitor.Reservas.com.services;
 
 import com.lanaVitor.Reservas.com.dtos.LoginDTO;
 import com.lanaVitor.Reservas.com.dtos.UserDTO;
+import com.lanaVitor.Reservas.com.dtos.UserRegistrationDTO;
 import com.lanaVitor.Reservas.com.entities.Login;
-import com.lanaVitor.Reservas.com.entities.Rooms;
 import com.lanaVitor.Reservas.com.entities.User;
 import com.lanaVitor.Reservas.com.repositories.LoginRepository;
 import com.lanaVitor.Reservas.com.repositories.RoomsRepository;
 import com.lanaVitor.Reservas.com.repositories.UserRepository;
+import com.lanaVitor.Reservas.com.services.exception.ResourceNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class UserService {
@@ -30,14 +30,23 @@ public class UserService {
         this.roomsRepository = roomsRepository;
     }
 
-    public UserDTO insert(UserDTO data) {
-        User entity = new User(data);
-        entity = repository.save(entity);
-        emailService.sendEmailText(entity.getEmail(), "Novo usuário cadastro", "Obrigado por efetuar o cadastro em nossa plataforma!");
-        return new UserDTO(entity);
-    }
+        @Transactional
+        public UserRegistrationDTO registerUser(UserDTO data) {
 
-    public boolean login(LoginDTO data) {
+            User existingUser = repository.findByEmail(data.getEmail());
+            if (existingUser != null) {
+                throw new ResourceNotFoundException("Usuário já cadastrado!");
+            }else{
+            User newUser = new User(data);
+            newUser = repository.save(newUser);
+
+            // Envio de e-mail de confirmação
+            emailService.sendEmailText(newUser.getEmail(), "Novo usuário cadastrado", "Obrigado por efetuar o cadastro em nossa plataforma!");
+
+            return new UserRegistrationDTO(newUser);
+        }
+}
+        public boolean login(LoginDTO data) {
         if (loginValidation(data)) return true;
         else return false;
     }

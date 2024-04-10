@@ -32,9 +32,6 @@ public class User {
     @ManyToMany(mappedBy = "userList")
     private List<Hotel> hotel;
 
-    @ManyToMany
-    List<User> user = new ArrayList<>();
-
     @OneToMany
     @JoinTable(name = "tb_users_rooms",
             joinColumns = @JoinColumn(name = "user_id"),

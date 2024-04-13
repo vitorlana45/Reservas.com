@@ -1,10 +1,7 @@
 package com.lanaVitor.Reservas.com.controllers;
 
 import com.lanaVitor.Reservas.com.dtos.*;
-import com.lanaVitor.Reservas.com.entities.Rooms;
 import com.lanaVitor.Reservas.com.services.HotelService;
-import com.lanaVitor.Reservas.com.services.RoomsService;
-import com.lanaVitor.Reservas.com.services.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,12 +11,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/resort")
 public class HotelController {
-    private final RoomsService roomsService;
+
     private HotelService hotelService;
 
     @Autowired
-    public HotelController(RoomsService roomsService, HotelService hotelService) {
-        this.roomsService = roomsService;
+    public HotelController(HotelService hotelService) {
         this.hotelService = hotelService;
     }
 

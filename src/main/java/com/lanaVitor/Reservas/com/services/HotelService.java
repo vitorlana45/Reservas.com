@@ -153,22 +153,24 @@ public class HotelService {
         // Inicializa a lista de quartos na entidade Hotel
         List<Rooms> roomsList = new ArrayList<>();
 
+        int count = 0;
         // Converte cada RoomsDTO para Rooms e adiciona à lista
         for (RoomsDTO roomsDTO : data.getRooms()) {
             Rooms rooms = new Rooms();
             rooms.setId(roomsDTO.getId());
             rooms.setRoomsNumber(roomsDTO.getRoomsNumber());
+            String rented = roomsDTO.getRented();
+            if (rented.equals("false")){
+                count++;
+            }
             roomsList.add(rooms);
         }
 
         // Define a lista de quartos na entidade Hotel
         entity.setListRooms(roomsList);
-
+        entity.setStatus(count != 0 ? "Disponivel" : "Cheio");
         return entity;
     }
-
-
-
     private User verificationUserExists(VerificationRegisterDTO data) {
         try {
             User user = new User();

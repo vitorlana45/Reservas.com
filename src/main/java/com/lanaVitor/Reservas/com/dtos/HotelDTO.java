@@ -26,8 +26,6 @@ public class HotelDTO {
 
     private List<RoomsDTO> rooms = new ArrayList<>();
 
-//  private List<UserDTO> userListDTO = new ArrayList<>();
-
 
     public HotelDTO(Hotel hotel) {
         id = hotel.getId();
@@ -36,16 +34,8 @@ public class HotelDTO {
         description = hotel.getDescription();
     }
 
-    public HotelDTO(Hotel hotel, List<Rooms> rooms) {
+    public HotelDTO(Hotel hotel, List<Rooms> entity) {
         this(hotel);
-        rooms.forEach(r -> this.rooms.add(new RoomsDTO(r)));
+        entity.forEach(r -> this.rooms.add(new RoomsDTO(r)));
     }
-
-//    public HotelDTO(Hotel hotel, List<Rooms> rooms, UserDTO user) {
-//        this(hotel);
-//        rooms.forEach(r -> this.rooms.add(new RoomsDTO(r)));
-//        userListDTO.add(user);
-//    }
-
-
 }

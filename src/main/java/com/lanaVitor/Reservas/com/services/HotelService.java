@@ -39,7 +39,7 @@ public class HotelService {
 
     public HotelInfoDTO getInfoResort(Long id) {
         Optional<Hotel> hotel = repository.findById(id);
-        Hotel entity = hotel.orElseThrow(() -> new RuntimeException("hotel nao encontrado"));
+        Hotel entity = hotel.orElseThrow(() -> new ResourceNotFoundException("hotel nao encontrado"));
         return new HotelInfoDTO(entity);
     }
 

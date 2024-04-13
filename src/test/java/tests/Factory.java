@@ -1,5 +1,6 @@
 package tests;
 
+import com.lanaVitor.Reservas.com.dtos.HotelDTO;
 import com.lanaVitor.Reservas.com.dtos.HotelInfoDTO;
 import com.lanaVitor.Reservas.com.entities.Hotel;
 import com.lanaVitor.Reservas.com.entities.Rooms;
@@ -24,4 +25,8 @@ public class Factory {
         return new Rooms(1L, 1, null, null, false, null, null);
     }
 
+    public static HotelDTO createHotelDTO() {
+        HotelDTO dto = new HotelDTO(Factory.createHotel());
+        return dto;
+    }
 }

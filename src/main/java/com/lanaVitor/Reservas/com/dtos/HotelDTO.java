@@ -14,6 +14,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Setter
 public class HotelDTO {
 
     private Long id;
@@ -28,10 +29,11 @@ public class HotelDTO {
 
 
     public HotelDTO(Hotel hotel) {
-        id = hotel.getId();
-        name = hotel.getName();
-        location = hotel.getLocation();
-        description = hotel.getDescription();
+        this.id = hotel.getId();
+        this.name = hotel.getName();
+        this.location = hotel.getLocation();
+        this.description = hotel.getDescription();
+        hotel.getListRooms().forEach(room -> this.rooms.add(new RoomsDTO(room)));
     }
 
     public HotelDTO(Hotel hotel, List<Rooms> entity) {

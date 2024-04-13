@@ -93,7 +93,7 @@ public class HotelService {
             repository.save(hotelEntity);
         }
 
-        if (room == null){
+        if (room == null) {
             throw new ResourceNotFoundException("Quarto indisponivel");
         }
 
@@ -134,7 +134,7 @@ public class HotelService {
         return null;
     }
 
-    public void sendConfirmationEmail(ReserveRoomsRequestDTO reservationData, ReserveRoomsRequestDTO userData) {
+    private void sendConfirmationEmail(ReserveRoomsRequestDTO reservationData, ReserveRoomsRequestDTO userData) {
         String totalPrice = UtilService.calculateTotalPrice(reservationData.getReservationDTO().getCheckIn(), reservationData.getReservationDTO().getCheckOut());
         User user = verificationUserExists(userData.getUser());
         if (user != null) {
@@ -149,8 +149,25 @@ public class HotelService {
         entity.setName(data.getName());
         entity.setLocation(data.getLocation());
         entity.setDescription(data.getDescription());
+
+        // Inicializa a lista de quartos na entidade Hotel
+        List<Rooms> roomsList = new ArrayList<>();
+
+        // Converte cada RoomsDTO para Rooms e adiciona à lista
+        for (RoomsDTO roomsDTO : data.getRooms()) {
+            Rooms rooms = new Rooms();
+            rooms.setId(roomsDTO.getId());
+            rooms.setRoomsNumber(roomsDTO.getRoomsNumber());
+            roomsList.add(rooms);
+        }
+
+        // Define a lista de quartos na entidade Hotel
+        entity.setListRooms(roomsList);
+
         return entity;
     }
+
+
 
     private User verificationUserExists(VerificationRegisterDTO data) {
         try {

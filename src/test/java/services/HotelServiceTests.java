@@ -1,8 +1,8 @@
 package services;
 
+import com.lanaVitor.Reservas.com.dtos.HotelDTO;
 import com.lanaVitor.Reservas.com.dtos.HotelInfoDTO;
 import com.lanaVitor.Reservas.com.entities.Hotel;
-import com.lanaVitor.Reservas.com.entities.Rooms;
 import com.lanaVitor.Reservas.com.repositories.HotelRepository;
 import com.lanaVitor.Reservas.com.services.HotelService;
 import com.lanaVitor.Reservas.com.services.exception.ResourceNotFoundException;
@@ -17,6 +17,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import tests.Factory;
 
 import java.util.Optional;
+
+import static org.mockito.ArgumentMatchers.any;
 
 
 @ExtendWith(SpringExtension.class)
@@ -33,19 +35,22 @@ public class HotelServiceTests {
     private long existingId;
     private long nonExistingId;
 
+    private HotelDTO hotelDTO;
+
     @BeforeEach
     void setUp() {
 
         existingId = 1L;
         nonExistingId = 100L;
 
-
+        hotelDTO = Factory.createHotelDTO();
         hotel = Factory.createHotel();
         hotel.addRooms(Factory.ListRooms());
 
 
         Mockito.when(repository.findById(existingId)).thenReturn(Optional.of(hotel));
         Mockito.when(repository.findById(nonExistingId)).thenThrow(ResourceNotFoundException.class);
+        Mockito.when(repository.save(any(Hotel.class))).thenReturn(new Hotel());
     }
 
     @Test
@@ -64,5 +69,12 @@ public class HotelServiceTests {
 
         Assertions.assertThrows(ResourceNotFoundException.class, () -> service.getInfoResort(nonExistingId));
 
+    }
+
+    @Test
+    public void InsertShouldSaveOnHotelRepository() {
+
+        Hotel entity = repository.save(hotel);
+        Assertions.assertNotNull(entity);
     }
 }

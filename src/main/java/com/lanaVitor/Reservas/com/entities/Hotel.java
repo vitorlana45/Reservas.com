@@ -27,8 +27,9 @@ public class Hotel {
     private String status;
 
     @Getter
+    @Setter
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Rooms> listRooms;
+    private List<Rooms> listRooms = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(

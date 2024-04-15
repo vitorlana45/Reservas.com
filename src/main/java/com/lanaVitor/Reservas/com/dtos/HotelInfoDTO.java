@@ -39,7 +39,7 @@ public class HotelInfoDTO {
         List<Rooms> roomsList = hotel.getListRooms();
         int sum = 1;
         for (Rooms list : roomsList) {
-            if (!list.isAvailable()) {
+            if (list.isAvailable()) {
                 count.add(sum++);
             }
         }

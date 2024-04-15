@@ -45,30 +45,35 @@ public class HotelService {
 
     public List<HotelDTO> getHotelDTOS() {
         List<Hotel> hotels = repository.findAll();
-        List<HotelDTO> hotelDTOs = new ArrayList<>();
+        if (hotels.isEmpty()) throw new ResourceNotFoundException("Recurso nao encontrado!");
 
+        List<HotelDTO> hotelDTOs = new ArrayList<>();
         for (Hotel hotel : hotels) {
-            List<Rooms> roomsList = hotel.getListRooms();
-            hotelDTOs.add(new HotelDTO(hotel, roomsList));
+            hotelDTOs.add(new HotelDTO(hotel));
         }
         return hotelDTOs;
     }
 
     public HotelDTO insert(HotelDTO entity) {
-        Hotel data = repository.save(convertHotelDtoToHotel(entity));
-        return new HotelDTO(data);
+
+        if (entity == null) {
+            throw new NullPointerException("Dados nullos");
+        } else {
+            Hotel data = repository.save(convertHotelDtoToHotel(entity));
+            return new HotelDTO(data);
+        }
     }
 
     public List<HotelDTO> searchAvailableRooms(Long id) {
 
         Optional<Hotel> hotelOptional = repository.findById(id);
-        Hotel hotelEntity = hotelOptional.orElseThrow(() -> new RuntimeException("Hotel não encontrado"));
+        Hotel hotelEntity = hotelOptional.orElseThrow(() -> new ResourceNotFoundException("Hotel não encontrado"));
 
         List<Rooms> listRooms = hotelEntity.getListRooms();
         List<HotelDTO> availableRooms = new ArrayList<>();
 
         for (Rooms room : listRooms) {
-            if (!room.isAvailable() & room.getUser() == null) { // método isAvailable() para verificar a disponibilidade
+            if (room.isAvailable() & room.getUser() == null) { // método isAvailable() para verificar a disponibilidade
                 HotelDTO hotelDTO = new HotelDTO(hotelEntity);
                 hotelDTO.getRooms().add(new RoomsDTO(room)); // Adiciona o quarto disponível ao DTO do hotel
                 availableRooms.add(hotelDTO);
@@ -123,7 +128,7 @@ public class HotelService {
     private Rooms findAvailableRoomAndUpdateStatus(Hotel hotel, Long roomId) {
         List<Rooms> rooms = hotel.getListRooms();
         Rooms room = rooms.stream()
-                .filter(r -> r.getId().equals(roomId) && !r.isRented() && r.getUser() == null)
+                .filter(r -> r.getId().equals(roomId) && r.getUser() == null)
                 .findFirst()
                 .orElse(null);
 
@@ -160,7 +165,7 @@ public class HotelService {
             rooms.setId(roomsDTO.getId());
             rooms.setRoomsNumber(roomsDTO.getRoomsNumber());
             String rented = roomsDTO.getRented();
-            if (rented.equals("false")){
+            if (rented.equals("false")) {
                 count++;
             }
             roomsList.add(rooms);
@@ -171,13 +176,14 @@ public class HotelService {
         entity.setStatus(count != 0 ? "Disponivel" : "Cheio");
         return entity;
     }
+
     private User verificationUserExists(VerificationRegisterDTO data) {
         try {
             User user = new User();
             user.setEmail(data.getEmail());
             return userRepositoy.findByEmail(user.getEmail());
         } catch (RuntimeException e) {
-            throw new EntityNotFoundException("É nescessario ter cadastro para reservar um quarto");
+            throw new EntityNotFoundException("É necessario ter cadastro para reservar um quarto");
         }
     }
 }

@@ -7,10 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,13 +17,13 @@ public class RoomsDTO {
     private Long id;
     @Setter
     private Integer roomsNumber;
-
+    @Setter
     private String rented;
 
     public RoomsDTO(Rooms rooms) {
         this.id = rooms.getId();
         this.roomsNumber = rooms.getRoomsNumber();
-        this.rented = (!rooms.isAvailable()) ?"Disponivel" : "Reservado";
+        this.rented = (rooms.isAvailable()) ?"Disponivel" : "Reservado";
     }
 
     public RoomsDTO(Rooms rooms, User user) {

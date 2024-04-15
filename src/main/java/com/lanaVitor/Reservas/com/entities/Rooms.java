@@ -37,12 +37,14 @@ public class Rooms implements Serializable {
     @JoinColumn(name = "hotel_id")
     @JsonIgnore
     @Getter
+    @Setter
     private Hotel hotel;
 
     @ManyToOne
     @JsonIgnore
     @Setter
     private User user;
+
 
     public boolean isAvailable() {
         return rented;

@@ -35,9 +35,4 @@ public class HotelDTO {
         this.description = hotel.getDescription();
         hotel.getListRooms().forEach(room -> this.rooms.add(new RoomsDTO(room)));
     }
-
-    public HotelDTO(Hotel hotel, List<Rooms> entity) {
-        this(hotel);
-        entity.forEach(r -> this.rooms.add(new RoomsDTO(r)));
-    }
 }

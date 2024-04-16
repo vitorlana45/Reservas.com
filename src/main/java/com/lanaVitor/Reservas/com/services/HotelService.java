@@ -22,12 +22,16 @@ import java.util.Optional;
 @Service
 public class HotelService {
 
+    private static final Integer limitQuantityRoom = 10;
+
     private HotelRepository repository;
     private UserRepository userRepositoy;
 
     private RoomsRepository roomsRepository;
 
     private EmailService emailService;
+
+    int capturedRoomNumber;
 
     @Autowired
     public HotelService(HotelRepository repository, UserRepository userRepository, RoomsRepository roomsRepository, EmailService emailService) {
@@ -137,6 +141,39 @@ public class HotelService {
             return room;
         }
         return null;
+    }
+
+    @Transactional
+    public void deleteRoom(Long hotelId, Long roomId) {
+
+        Optional<Hotel> hotelOptional = repository.findById(hotelId);
+        Hotel hotel = hotelOptional.orElseThrow(() -> new ResourceNotFoundException("Hotel não encontrado"));
+
+        List<Rooms> hotelListRooms = hotel.getListRooms();
+
+        boolean isRoomRemoved = hotelListRooms.removeIf(room -> {
+
+            if (room.getId().equals(roomId)) {
+                this.capturedRoomNumber = room.getRoomsNumber();
+                return true;
+            }
+            return false;
+        });
+        if (!isRoomRemoved) {
+            throw new ResourceNotFoundException("Quarto não encontrado no hotel.");
+        }
+
+        try {
+            roomsRepository.deleteById(roomId);
+        } catch (RuntimeException e) {
+            throw new ResourceNotFoundException("Erro ao excluir o quarto.");
+        }
+
+        List<Rooms> listVerification = roomsRepository.findAll();
+        int roomsToAdd = limitQuantityRoom - listVerification.size();
+        for (int i = 0; i < roomsToAdd; i++) {
+            roomsRepository.save(new Rooms(null, capturedRoomNumber, null,null,false,null,null));
+        }
     }
 
     private void sendConfirmationEmail(ReserveRoomsRequestDTO reservationData, ReserveRoomsRequestDTO userData) {

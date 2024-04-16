@@ -47,7 +47,7 @@ public class Rooms implements Serializable {
 
 
     public boolean isAvailable() {
-        return rented;
+        return !rented;
     }
 
 }

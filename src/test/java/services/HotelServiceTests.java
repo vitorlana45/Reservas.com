@@ -12,7 +12,6 @@ import com.lanaVitor.Reservas.com.repositories.UserRepository;
 import com.lanaVitor.Reservas.com.services.EmailService;
 import com.lanaVitor.Reservas.com.services.HotelService;
 import com.lanaVitor.Reservas.com.services.exception.ResourceNotFoundException;
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

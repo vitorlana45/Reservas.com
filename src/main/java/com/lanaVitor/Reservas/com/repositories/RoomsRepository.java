@@ -1,7 +1,6 @@
 package com.lanaVitor.Reservas.com.repositories;
 
 
-import com.lanaVitor.Reservas.com.dtos.RoomsDTO;
 import com.lanaVitor.Reservas.com.entities.Rooms;
 import org.springframework.data.jpa.repository.JpaRepository;
 

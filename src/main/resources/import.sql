@@ -15,4 +15,9 @@ INSERT INTO tb_rooms (rooms_number, hotel_id, check_in, check_out, rented, user_
 INSERT INTO tb_rooms (rooms_number, hotel_id, check_in, check_out, rented, user_id) VALUES (2, 1, '2024-04-17 09:00:00', '2024-04-22 09:00:00', 1, 1);
 INSERT INTO tb_rooms (rooms_number, hotel_id,  rented) VALUES (3,1,0);
 INSERT INTO tb_rooms (rooms_number, hotel_id,  rented) VALUES (4,1,0);
-
+INSERT INTO tb_rooms (rooms_number, hotel_id,  rented) VALUES (5,1,0);
+INSERT INTO tb_rooms (rooms_number, hotel_id,  rented) VALUES (6,1,0);
+INSERT INTO tb_rooms (rooms_number, hotel_id,  rented) VALUES (7,1,0);
+INSERT INTO tb_rooms (rooms_number, hotel_id,  rented) VALUES (8,1,0);
+INSERT INTO tb_rooms (rooms_number, hotel_id,  rented) VALUES (9,1,0);
+INSERT INTO tb_rooms (rooms_number, hotel_id,  rented) VALUES (10,1,0);

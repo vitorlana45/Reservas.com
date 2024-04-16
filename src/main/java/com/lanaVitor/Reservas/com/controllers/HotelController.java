@@ -2,6 +2,7 @@ package com.lanaVitor.Reservas.com.controllers;
 
 import com.lanaVitor.Reservas.com.dtos.*;
 import com.lanaVitor.Reservas.com.services.HotelService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,9 +45,18 @@ public class HotelController {
     }
 
     @PostMapping("/{id}/reserve")
-    public ResponseEntity <ResponseRentedRoom> reserveRooms(@PathVariable Long id, @RequestBody ReserveRoomsRequestDTO requestDTO) {
+    public ResponseEntity<ResponseRentedRoom> reserveRooms(@PathVariable Long id, @RequestBody ReserveRoomsRequestDTO requestDTO) {
 
         ResponseRentedRoom data = hotelService.reserveRoom(requestDTO, id, requestDTO);
         return ResponseEntity.ok().body(data);
     }
+
+
+    @DeleteMapping("/{resortId}/Room/{roomId}")
+    public ResponseEntity<Void> restoreRoom(@PathVariable Long resortId, @PathVariable Long roomId) {
+         hotelService.deleteRoom(resortId, roomId);
+
+        return ResponseEntity.ok().build();
+    }
+
 }

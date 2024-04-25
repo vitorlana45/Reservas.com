@@ -1,5 +1,6 @@
 package com.lanaVitor.Reservas.com.dtos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lanaVitor.Reservas.com.entities.Hotel;
 import com.lanaVitor.Reservas.com.entities.Rooms;
 import com.lanaVitor.Reservas.com.entities.User;

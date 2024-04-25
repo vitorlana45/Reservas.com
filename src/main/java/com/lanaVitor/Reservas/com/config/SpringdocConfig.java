@@ -18,7 +18,7 @@ public class SpringdocConfig {
                         .version("1.1.0")
                         .license(new License().name("Apache 2.0").url("http://springdoc.org")))
                         .externalDocs(new ExternalDocumentation()
-                        .description("Link do Repositório da Aplicação - APIRestful Documentation")
+                        .description("Link do Repositório da Aplicação - API Restful Documentation")
                         .url("https://github.com/vitorlana45/Reservas.com"));
     }
 }

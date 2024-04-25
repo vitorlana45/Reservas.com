@@ -69,7 +69,7 @@ public class HotelService {
         }
     }
 
-    public List<HotelDTO> searchAvailableRooms(Long id) {
+    public HotelDTO searchAllRooms(Long id) {
 
         Optional<Hotel> hotelOptional = repository.findById(id);
         Hotel hotelEntity = hotelOptional.orElseThrow(() -> new ResourceNotFoundException("Hotel não encontrado"));
@@ -84,7 +84,7 @@ public class HotelService {
                 availableRooms.add(hotelDTO);
             }
         }
-        return availableRooms;
+        return new HotelDTO(hotelEntity);
     }
 
     @Transactional
@@ -115,12 +115,8 @@ public class HotelService {
 
         Rooms savedRoom = roomsRepository.save(room);
 
-        if (savedRoom != null) {
-            sendConfirmationEmail(data, user);
-            return new ResponseRentedRoom(savedRoom);
-        } else {
-            throw new RuntimeException("Erro ao salvar quarto reservado.");
-        }
+        sendConfirmationEmail(data, user);
+        return new ResponseRentedRoom(savedRoom);
     }
 
     // Método para verificar se todos os quartos do hotel estão ocupados
@@ -173,7 +169,7 @@ public class HotelService {
         List<Rooms> listVerification = roomsRepository.findAll();
         int roomsToAdd = limitQuantityRoom - listVerification.size();
         for (int i = 0; i < roomsToAdd; i++) {
-            roomsRepository.save(new Rooms(null, capturedRoomNumber, null,null,false,null,null));
+            roomsRepository.save(new Rooms(null, capturedRoomNumber, null, null, false, null, null));
         }
     }
 

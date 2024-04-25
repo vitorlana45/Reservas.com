@@ -11,6 +11,7 @@ import com.lanaVitor.Reservas.com.repositories.RoomsRepository;
 import com.lanaVitor.Reservas.com.repositories.UserRepository;
 import com.lanaVitor.Reservas.com.services.EmailService;
 import com.lanaVitor.Reservas.com.services.HotelService;
+import com.lanaVitor.Reservas.com.services.exception.NullEntityException;
 import com.lanaVitor.Reservas.com.services.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -172,18 +173,18 @@ public class HotelServiceTests {
     @Test
     @DisplayName("Insert should return NullPointerException when data is null")
     public void InsertShouldReturnNullPointerExceptionWhenDataIsNull() {
-        Assertions.assertThrows(NullPointerException.class, () -> service.insert(null));
+        Assertions.assertThrows(NullEntityException.class, () -> service.insert(null));
     }
 
     @Test
-    @DisplayName("available Rooms should return room list when id exists ")
-    public void availableRoomsShouldReturnRoomListWhenIdExists() {
+    @DisplayName("available Rooms should return room list when resort id exists ")
+    public void availableRoomsShouldReturnRoomListWhenResortIdExists() {
         // Arrange
 
         Optional<Hotel> hotelEntity = repository.findById(existingId);
 
         // Act
-        List<HotelDTO> actualRooms = service.searchAvailableRooms(existingId);
+        HotelDTO actualRooms = service.searchAllRooms(existingId);
 
         // Assert
         Assertions.assertNotNull(actualRooms);
@@ -195,7 +196,7 @@ public class HotelServiceTests {
     @DisplayName("searchAvailableRooms should return ResourceNotFoundException.class when id non exists")
     public void searchAvailableRoomsShouldReturnResourceNotFoundExceptionWhenIdNonExists() {
 
-        Assertions.assertThrows(ResourceNotFoundException.class, () -> service.searchAvailableRooms(nonExistingId));
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> service.searchAllRooms(nonExistingId));
     }
 
     @Test

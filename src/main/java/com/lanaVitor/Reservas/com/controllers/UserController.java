@@ -34,18 +34,23 @@ public class UserController {
     @PostMapping("/register")
     @Operation(summary = "cadastro de novos usuários", description = "cadastro de novos usuários")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "A requisição foi executada com secusso."),
-            @ApiResponse(responseCode = "404", description = "Recurso Indisponivel, Bad Request")})
+            @ApiResponse(responseCode = "200", description = "A requisição foi executada com secusso."),
+            @ApiResponse(responseCode = "422", description = "Recurso Indisponivel, Unprocessable Entity "),
+            @ApiResponse(responseCode = "400", description = "Recurso Indisponivel, Bad Request")})
     public ResponseEntity<UserRegistrationDTO> register(@RequestBody @Valid UserDTO data) {
         UserRegistrationDTO dto = service.registerUser(data);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(data.getId()).toUri();
         return ResponseEntity.created(uri).body(dto);
     }
-
+    @Operation(summary = "Logind de usuários cadastrados", description = "usuarios cadastrador exemplo: angela@gmail.com")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "A requisição foi executada com secusso."),
+            @ApiResponse(responseCode = "422", description = "Recurso Indisponivel, Unprocessable Entity "),
+            @ApiResponse(responseCode = "404", description = "Recurso Indisponivel, Not Found")})
     @PostMapping("/login")
-    public ResponseEntity<LoginDTO> login(@RequestBody LoginDTO data) {
+    public ResponseEntity<LoginDTO> login(@RequestBody @Valid LoginDTO data) {
         boolean dto = service.login(data);
-        if (dto == true) return ResponseEntity.ok().build();
+        if (dto) return ResponseEntity.ok().build();
         else return ResponseEntity.unprocessableEntity().build();
 
     }

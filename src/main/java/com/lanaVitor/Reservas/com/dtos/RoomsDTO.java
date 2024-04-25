@@ -8,16 +8,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 public class RoomsDTO {
 
-    @Setter
     private Long id;
-    @Setter
     private Integer roomsNumber;
-    @Setter
     private String rented;
 
     public RoomsDTO(Rooms rooms) {

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public class VerificationRegisterDTO {
+
     private String email;
 
 }

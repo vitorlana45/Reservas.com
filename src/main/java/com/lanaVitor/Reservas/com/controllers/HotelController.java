@@ -5,11 +5,13 @@ import com.lanaVitor.Reservas.com.services.HotelService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.apache.coyote.Response;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -43,17 +45,22 @@ public class HotelController {
         return ResponseEntity.ok().body(dto);
     }
 
-    @Operation(summary = "Informações do resort", description = "Informações completa do resort")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "A requisição foi executada com secusso."),
-            @ApiResponse(responseCode = "404", description = "Recurso não encontrado")})
     @PostMapping("/insert")
-    public ResponseEntity<HotelDTO> insertResort(@RequestBody HotelDTO data) {
+    @Operation(summary = "Inserção de novos Resorts / hoteis", description = "Inserção de novos resorts")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "A requisição foi executada com secusso."),
+            @ApiResponse(responseCode = "404", description = "Recurso Indisponivel, Bad Request")})
+    public ResponseEntity<HotelDTO> insertResort(@Valid @RequestBody HotelDTO data) {
         HotelDTO entity = hotelService.insert(data);
-        return ResponseEntity.ok().body(entity);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(data.getId()).toUri();
+        return ResponseEntity.created(uri).body(entity);
     }
 
     @GetMapping("/{id}/available/rooms")
+    @Operation(summary = "Inserção de novos Resorts / hoteis", description = "Inserção de novos resorts")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "A requisnição foi executada com secusso."),
+            @ApiResponse(responseCode = "404", description = "Recurso não encontrado")})
     public ResponseEntity<List<HotelDTO>> availableRooms(@PathVariable Long id) {
         List<HotelDTO> list = hotelService.searchAvailableRooms(id);
         return ResponseEntity.ok().body(list);
@@ -69,7 +76,7 @@ public class HotelController {
 
     @DeleteMapping("/{resortId}/Room/{roomId}")
     public ResponseEntity<Void> restoreRoom(@PathVariable Long resortId, @PathVariable Long roomId) {
-         hotelService.deleteRoom(resortId, roomId);
+        hotelService.deleteRoom(resortId, roomId);
 
         return ResponseEntity.ok().build();
     }

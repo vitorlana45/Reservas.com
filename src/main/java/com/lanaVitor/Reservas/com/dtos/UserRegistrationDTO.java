@@ -1,13 +1,12 @@
 package com.lanaVitor.Reservas.com.dtos;
 
+
 import com.lanaVitor.Reservas.com.entities.User;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
 public class UserRegistrationDTO {

@@ -8,7 +8,7 @@ import com.lanaVitor.Reservas.com.entities.User;
 import com.lanaVitor.Reservas.com.repositories.LoginRepository;
 import com.lanaVitor.Reservas.com.repositories.RoomsRepository;
 import com.lanaVitor.Reservas.com.repositories.UserRepository;
-import com.lanaVitor.Reservas.com.services.exception.ResourceNotFoundException;
+import com.lanaVitor.Reservas.com.services.exception.ExistingUserException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,7 +35,7 @@ public class UserService {
 
             User existingUser = repository.findByEmail(data.getEmail());
             if (existingUser != null) {
-                throw new ResourceNotFoundException("Usuário já cadastrado!");
+                throw new ExistingUserException("Usuário já cadastrado!");
             }else{
             User newUser = new User(data);
             newUser = repository.save(newUser);

@@ -2,6 +2,9 @@ package com.lanaVitor.Reservas.com.controllers;
 
 import com.lanaVitor.Reservas.com.dtos.*;
 import com.lanaVitor.Reservas.com.services.HotelService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,17 +24,29 @@ public class HotelController {
     }
 
     @GetMapping(("/rooms"))
+    @Operation(summary = "Lista de quartos ", description = "Listagem de quartos do Resort")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "A requisição foi executada com secusso."),
+            @ApiResponse(responseCode = "404", description = "Recurso não encontrado")})
     public ResponseEntity<List<HotelDTO>> getListRooms() {
         List<HotelDTO> list = hotelService.getHotelDTOS();
         return ResponseEntity.ok().body(list);
     }
 
+    @Operation(summary = "Informações do resort", description = "Informações completa do resort")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "A requisição foi executada com secusso."),
+            @ApiResponse(responseCode = "404", description = "Recurso não encontrado")})
     @GetMapping(value = "/{id}")
     public ResponseEntity<HotelInfoDTO> infoResorts(@PathVariable Long id) {
         HotelInfoDTO dto = hotelService.getInfoResort(id);
         return ResponseEntity.ok().body(dto);
     }
 
+    @Operation(summary = "Informações do resort", description = "Informações completa do resort")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "A requisição foi executada com secusso."),
+            @ApiResponse(responseCode = "404", description = "Recurso não encontrado")})
     @PostMapping("/insert")
     public ResponseEntity<HotelDTO> insertResort(@RequestBody HotelDTO data) {
         HotelDTO entity = hotelService.insert(data);

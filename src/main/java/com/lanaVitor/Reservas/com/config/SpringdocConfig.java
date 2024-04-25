@@ -16,6 +16,7 @@ public class SpringdocConfig {
 
     @Value("${springdoc.openapi.path-info.basePath2}")
     private String urlGitHub;
+
     @Bean
     public OpenAPI springDocOpenAPI() {
         return new OpenAPI()

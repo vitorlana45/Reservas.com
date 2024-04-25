@@ -9,16 +9,10 @@ import java.util.Properties;
 @Service
 public class domainEmailValidator {
 
-    public static boolean isValid(String email) {
+    private static final List<String> acceptableDomains;
 
-        // Extrair o domínio do endereço de e-mail
-        String domain = email.substring(email.indexOf("@") + 1);
-
-        // Configurar as propriedades para a busca do MX record
-        Properties properties = new Properties();
-        properties.put("mail.smtp.host", "smtp." + domain);
-
-        List<String> acceptableDomains = new ArrayList<>();
+    static {
+        acceptableDomains = new ArrayList<>();
         acceptableDomains.add("gmail.com");
         acceptableDomains.add("hotmail.com");
         acceptableDomains.add("yahoo.com");
@@ -29,7 +23,10 @@ public class domainEmailValidator {
         acceptableDomains.add("yahoo.com.br");
         acceptableDomains.add("outlook.com.br");
         acceptableDomains.add("icloud.com.br");
+    }
 
+    public static boolean isValid(String email) {
+        String domain = email.substring(email.indexOf("@") + 1);
         return acceptableDomains.contains(domain);
     }
 }

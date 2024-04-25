@@ -7,6 +7,7 @@ import com.lanaVitor.Reservas.com.entities.User;
 import com.lanaVitor.Reservas.com.repositories.HotelRepository;
 import com.lanaVitor.Reservas.com.repositories.RoomsRepository;
 import com.lanaVitor.Reservas.com.repositories.UserRepository;
+import com.lanaVitor.Reservas.com.services.exception.NullEntityException;
 import com.lanaVitor.Reservas.com.services.exception.ResourceNotFoundException;
 import com.lanaVitor.Reservas.com.services.util.UtilService;
 import jakarta.persistence.EntityNotFoundException;
@@ -61,7 +62,7 @@ public class HotelService {
     public HotelDTO insert(HotelDTO entity) {
 
         if (entity == null) {
-            throw new NullPointerException("Dados nullos");
+            throw new NullEntityException("Dados nullos");
         } else {
             Hotel data = repository.save(convertHotelDtoToHotel(entity));
             return new HotelDTO(data);

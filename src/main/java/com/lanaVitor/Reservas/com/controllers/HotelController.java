@@ -49,8 +49,9 @@ public class HotelController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "A requisição foi executada com secusso."),
             @ApiResponse(responseCode = "404", description = "Recurso Indisponivel, Not Found")})
-    @PostMapping(value = "/insert/hotel")
+    @PostMapping(value = "/insert")
     public ResponseEntity<HotelDTO> insertResort(@RequestBody HotelDTO data) {
+
         HotelDTO entity = hotelService.insert(data);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(data.getId()).toUri();
         return ResponseEntity.created(uri).body(entity);

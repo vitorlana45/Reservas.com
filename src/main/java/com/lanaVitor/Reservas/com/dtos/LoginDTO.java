@@ -29,4 +29,9 @@ public class LoginDTO {
         password = entity.getPassword();
         this.loginMoment = LocalDateTime.now();
     }
+
+    public LoginDTO(UpdateUserDTO entity) {
+        email = entity.getEmail();
+        password = entity.getPassword();
+    }
 }

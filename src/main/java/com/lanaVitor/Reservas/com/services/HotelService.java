@@ -145,7 +145,7 @@ public class HotelService {
     public void deleteRoom(Long hotelId, Long roomId) {
 
         Optional<Hotel> hotelOptional = repository.findById(hotelId);
-        Hotel hotel = hotelOptional.orElseThrow(() -> new ResourceNotFoundException("Hotel não encontrado"));
+        Hotel hotel = hotelOptional.orElseThrow(() -> new ResourceNotFoundException("Hotel não Encontrado"));
 
         List<Rooms> hotelListRooms = hotel.getListRooms();
 

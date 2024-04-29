@@ -1,14 +1,12 @@
 package com.lanaVitor.Reservas.com.controllers;
 
-import com.lanaVitor.Reservas.com.dtos.LoginDTO;
-import com.lanaVitor.Reservas.com.dtos.LoginResponseDTO;
-import com.lanaVitor.Reservas.com.dtos.UserRegistrationDTO;
-import com.lanaVitor.Reservas.com.dtos.UserDTO;
+import com.lanaVitor.Reservas.com.dtos.*;
 import com.lanaVitor.Reservas.com.entities.User;
 import com.lanaVitor.Reservas.com.infra.security.TokenService;
 import com.lanaVitor.Reservas.com.repositories.RoomsRepository;
 import com.lanaVitor.Reservas.com.repositories.UserRepository;
 import com.lanaVitor.Reservas.com.services.UserService;
+import com.lanaVitor.Reservas.com.services.exception.ExistingUserException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -37,7 +35,7 @@ public class UserController {
     private final TokenService tokenService;
 
     @Autowired
-    public UserController(UserService service,  UserRepository userRepository, AuthenticationManager authenticationManager, TokenService tokenService) {
+    public UserController(UserService service, UserRepository userRepository, AuthenticationManager authenticationManager, TokenService tokenService) {
         this.service = service;
         this.userRepository = userRepository;
         this.authenticationManager = authenticationManager;
@@ -60,6 +58,7 @@ public class UserController {
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dto.getId()).toUri();
         return ResponseEntity.created(uri).body(dto);
     }
+
     @Operation(summary = "Login de usuários cadastrados", description = "usuarios cadastrador exemplo: angela@gmail.com")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "A requisição foi executada com secusso."),
@@ -70,9 +69,25 @@ public class UserController {
 
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.getEmail(), data.getPassword());
         var auth = this.authenticationManager.authenticate(usernamePassword);
-        var token = tokenService.generateToken( (User) auth.getPrincipal());
+        var token = tokenService.generateToken((User) auth.getPrincipal());
 
         return ResponseEntity.ok(new LoginResponseDTO(token));
 
+    }
+    @PostMapping("/update/{id}")
+    @Operation(summary = "Update de usuários cadastrados", description = "usuarios cadastrador exemplo: angela@gmail.com")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "A requisição foi executada com secusso."),
+            @ApiResponse(responseCode = "422", description = "Recurso Indisponivel, Unprocessable Entity "),
+            @ApiResponse(responseCode = "404", description = "Recurso Indisponivel, Not Found")})
+    public ResponseEntity<UpdateUserDTO> userUpdate(@RequestBody UpdateUserDTO updateUserDTO, @PathVariable Long id) {
+
+        User user = userRepository.findById(id).orElseThrow(() -> new ExistingUserException("Usuário "));
+        if (user != null) {
+            UpdateUserDTO entity = service.updateUser(updateUserDTO, id);
+            return ResponseEntity.ok().body(entity);
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }

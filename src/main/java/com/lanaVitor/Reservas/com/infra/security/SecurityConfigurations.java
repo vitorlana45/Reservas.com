@@ -37,9 +37,10 @@ public class SecurityConfigurations {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/users/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/resort/insert/hotel").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/users/update/").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/resort/insert").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/resort/restoreRoom").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/resort/reserveRooms").hasAnyRole("USER","ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/resort/reserveRooms").hasAnyRole("USER","ADMIN")
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/webjars/**", "/swagger-resources/**").permitAll()
                         .anyRequest().authenticated()
                 )

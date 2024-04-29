@@ -1,10 +1,9 @@
-package com.lanaVitor.Reservas.com.services;
+package com.lanaVitor.Reservas.com.services.validation;
 
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 @Service
 public class domainEmailValidator {

@@ -1,9 +1,11 @@
 package com.lanaVitor.Reservas.com.dtos;
 
 import com.lanaVitor.Reservas.com.entities.User;
+import com.lanaVitor.Reservas.com.entities.UserRole;
 import com.lanaVitor.Reservas.com.services.validation.UserInsertValid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,10 +27,13 @@ public class UserDTO {
     @NotBlank
     private String password;
 
+    private UserRole role;
+
     public UserDTO(User entity) {
         id = entity.getId();
         name = entity.getName();
         email = entity.getEmail();
         password = entity.getPassword();
+        role = entity.getRole();
     }
 }

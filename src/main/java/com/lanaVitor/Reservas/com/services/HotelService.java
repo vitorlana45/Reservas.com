@@ -13,6 +13,7 @@ import com.lanaVitor.Reservas.com.services.util.UtilService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -106,8 +107,9 @@ public class HotelService {
             throw new ResourceNotFoundException("Quarto indisponivel");
         }
 
-        User entity = verificationUserExists(user.getUser());
-        room.setUser(entity);
+        UserDetails entity = verificationUserExists(user.getUser());
+
+        room.setUser((User) entity);
         room.setCheckIn(data.getReservationDTO().getCheckIn());
         room.setCheckOut(data.getReservationDTO().getCheckOut());
         room.setRented(true);
@@ -174,7 +176,7 @@ public class HotelService {
 
     private void sendConfirmationEmail(ReserveRoomsRequestDTO reservationData, ReserveRoomsRequestDTO userData) {
         String totalPrice = UtilService.calculateTotalPrice(reservationData.getReservationDTO().getCheckIn(), reservationData.getReservationDTO().getCheckOut());
-        User user = verificationUserExists(userData.getUser());
+        User user = (User) verificationUserExists(userData.getUser());
         if (user != null) {
             emailService.sendEmailText(userData.getUser().getEmail(), "Confirmação de reserva", totalPrice);
         } else {
@@ -204,17 +206,14 @@ public class HotelService {
             roomsList.add(rooms);
         }
 
-        // Define a lista de quartos na entidade Hotel
         entity.setListRooms(roomsList);
         entity.setStatus(count != 0 ? "Disponivel" : "Cheio");
         return entity;
     }
 
-    private User verificationUserExists(VerificationRegisterDTO data) {
+    private UserDetails verificationUserExists(VerificationRegisterDTO data) {
         try {
-            User user = new User();
-            user.setEmail(data.getEmail());
-            return userRepositoy.findByEmail(user.getEmail());
+            return userRepositoy.findUserByEmail(data.getEmail());
         } catch (RuntimeException e) {
             throw new EntityNotFoundException("É necessario ter cadastro para reservar um quarto");
         }

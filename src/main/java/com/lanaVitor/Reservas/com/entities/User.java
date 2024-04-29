@@ -7,7 +7,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -16,7 +20,7 @@ import java.util.Objects;
 @Getter
 @Entity(name = "tb_users")
 @Table(name = "tb_users")
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,6 +29,7 @@ public class User {
     @Setter
     private String email;
     private String password;
+    private UserRole role;
 
 
     @ManyToMany(mappedBy = "userList")
@@ -36,7 +41,7 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "rooms_id"))
     private List<Rooms> rooms;
 
-    public User (UserRegistrationDTO entity){
+    public User(UserRegistrationDTO entity) {
         id = entity.getId();
         name = entity.getName();
         email = entity.getEmail();
@@ -47,6 +52,14 @@ public class User {
         name = entity.getName();
         email = entity.getEmail();
         password = entity.getPassword();
+        role = (entity.getRole() == null) ? UserRole.USER : entity.getRole();
+    }
+
+    public User(String name, String email, String encryptedPassword, UserRole role) {
+        this.name = name;
+        this.email = email;
+        this.password = encryptedPassword;
+        this.role = role;
     }
 
     @Override
@@ -65,5 +78,36 @@ public class User {
         return Objects.hash(id, name, email, password);
     }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        if (this.role.equals(UserRole.ADMIN.getRole())) {
+            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+        }else {
+            return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        }
+    }
+        @Override
+        public String getUsername () {
+            return email;
+        }
 
-}
+        @Override
+        public boolean isAccountNonExpired () {
+            return true;
+        }
+
+        @Override
+        public boolean isAccountNonLocked () {
+            return true;
+        }
+
+        @Override
+        public boolean isCredentialsNonExpired () {
+            return true;
+        }
+
+        @Override
+        public boolean isEnabled () {
+            return true;
+        }
+    }

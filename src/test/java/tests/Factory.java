@@ -82,9 +82,10 @@ public class Factory {
         return new ReserveRoomsRequestDTO(reservationHotelDTO, verificationRegisterDTO);
     }
 
+    //TODO  CONCERTAR O TESTE POIS CONTEM ROLE
     public static User createUser() {
 
-        return new User(1L, "name", "email@email.com", "password", null, null);
+        return new User(1L, "name", "email@email.com", "password", null, null,null);
     }
 
     public static Hotel createRoomsOccupied (){
@@ -124,7 +125,7 @@ public class Factory {
 
     public static User createEmailNotFoundOnDataBase() {
 
-        return new User(1L, "notFound", "notFound@email.com", "password", null, null);
+        return new User(1L, "notFound", "notFound@email.com", "password", null,null, null);
     }
 
 

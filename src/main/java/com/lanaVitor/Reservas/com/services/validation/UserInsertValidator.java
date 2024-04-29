@@ -4,10 +4,10 @@ import com.lanaVitor.Reservas.com.controllers.exceptions.FieldMessage;
 import com.lanaVitor.Reservas.com.dtos.UserDTO;
 import com.lanaVitor.Reservas.com.entities.User;
 import com.lanaVitor.Reservas.com.repositories.UserRepository;
-import com.lanaVitor.Reservas.com.services.domainEmailValidator;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,7 @@ public class UserInsertValidator implements ConstraintValidator<UserInsertValid,
 		}
 
 		// Verifica se o e-mail já existe na base de dados
-		User user = repository.findByEmail(dto.getEmail());
+		UserDetails user = repository.findByEmail(dto.getEmail());
 		if (user != null) {
 			list.add(new FieldMessage("email", "Email já existe"));
 		}

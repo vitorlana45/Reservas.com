@@ -11,6 +11,7 @@ import com.lanaVitor.Reservas.com.repositories.UserRepository;
 import com.lanaVitor.Reservas.com.services.exception.ExistingUserException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -33,10 +34,6 @@ public class UserService {
         @Transactional
         public UserRegistrationDTO registerUser(UserDTO data) {
 
-            User existingUser = repository.findByEmail(data.getEmail());
-            if (existingUser != null) {
-                throw new ExistingUserException("Usuário já cadastrado!");
-            }else{
             User newUser = new User(data);
             newUser = repository.save(newUser);
 
@@ -44,7 +41,7 @@ public class UserService {
             emailService.sendEmailText(newUser.getEmail(), "Novo usuário cadastrado", "Obrigado por efetuar o cadastro em nossa plataforma!");
 
             return new UserRegistrationDTO(newUser);
-        }
+
 }
         public boolean login(LoginDTO data) {
         if (loginValidation(data)) return true;
@@ -52,7 +49,7 @@ public class UserService {
     }
 
     private boolean loginValidation(LoginDTO dto) {
-        User user = repository.findByEmail(dto.getEmail());
+        User user = repository.findUserByEmail(dto.getEmail());
         if (user != null && user.getPassword().equals(dto.getPassword())) {
             loginRepository.save(new Login(user));
             return true;

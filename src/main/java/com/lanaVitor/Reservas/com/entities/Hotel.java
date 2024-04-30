@@ -14,6 +14,7 @@ import java.util.*;
 @Entity
 @Table(name = "tb_hotel")
 public class Hotel {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,7 +32,7 @@ public class Hotel {
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Rooms> listRooms = new ArrayList<>();
 
-    @ManyToMany
+    @OneToMany
     @JoinTable(
             name = "tb_hotel_user",
             joinColumns = @JoinColumn(name = "hotel_id"),

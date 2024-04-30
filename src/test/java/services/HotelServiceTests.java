@@ -155,27 +155,6 @@ public class HotelServiceTests {
         Assertions.assertThrows(ResourceNotFoundException.class, () -> service.getInfoResort(nonExistingId));
 
     }
-
-    @Test
-    @DisplayName("Insert should save on hotelRepository with success")
-    public void InsertShouldSaveOnHotelRepository() {
-
-        HotelDTO entity = service.insert(hotelDTO);
-
-        Assertions.assertNotNull(entity);
-        Assertions.assertEquals(hotelDTO.getId(), entity.getId());
-        Assertions.assertEquals(hotelDTO.getName(), entity.getName());
-        Assertions.assertEquals(hotelDTO.getDescription(), entity.getDescription());
-        Assertions.assertEquals(hotelDTO.getLocation(), entity.getLocation());
-        Assertions.assertFalse(hotelDTO.getRooms().isEmpty());
-    }
-
-    @Test
-    @DisplayName("Insert should return NullPointerException when data is null")
-    public void InsertShouldReturnNullPointerExceptionWhenDataIsNull() {
-        Assertions.assertThrows(NullEntityException.class, () -> service.insert(null));
-    }
-
     @Test
     @DisplayName("available Rooms should return room list when resort id exists ")
     public void availableRoomsShouldReturnRoomListWhenResortIdExists() {

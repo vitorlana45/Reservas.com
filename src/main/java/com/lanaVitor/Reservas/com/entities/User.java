@@ -37,8 +37,8 @@ public class User implements UserDetails {
     private UserRole role;
 
 
-    @ManyToMany(mappedBy = "userList")
-    private List<Hotel> hotel;
+    @ManyToOne
+    private Hotel hotel;
 
     @OneToMany
     @JoinTable(name = "tb_users_rooms",

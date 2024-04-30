@@ -60,16 +60,6 @@ public class HotelService {
         return hotelDTOs;
     }
 
-    public HotelDTO insert(HotelDTO entity) {
-
-        if (entity == null) {
-            throw new NullEntityException("Dados nullos");
-        } else {
-            Hotel data = repository.save(convertHotelDtoToHotel(entity));
-            return new HotelDTO(data);
-        }
-    }
-
     public HotelDTO searchAllRooms(Long id) {
 
         Optional<Hotel> hotelOptional = repository.findById(id);

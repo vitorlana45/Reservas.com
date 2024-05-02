@@ -1,54 +1,62 @@
 package com.lanaVitor.Reservas.com.services;
 
-import com.lanaVitor.Reservas.com.dtos.LoginDTO;
+import com.lanaVitor.Reservas.com.dtos.ListUsersDTO;
 import com.lanaVitor.Reservas.com.dtos.UpdateUserDTO;
 import com.lanaVitor.Reservas.com.dtos.UserDTO;
 import com.lanaVitor.Reservas.com.dtos.UserRegistrationDTO;
-import com.lanaVitor.Reservas.com.entities.Login;
 import com.lanaVitor.Reservas.com.entities.User;
-import com.lanaVitor.Reservas.com.repositories.LoginRepository;
-import com.lanaVitor.Reservas.com.repositories.RoomsRepository;
 import com.lanaVitor.Reservas.com.repositories.UserRepository;
-import com.lanaVitor.Reservas.com.services.exception.ExistingUserException;
-import com.lanaVitor.Reservas.com.services.exception.NullEntityException;
+import com.lanaVitor.Reservas.com.services.exception.ExistsUserException;
+import com.lanaVitor.Reservas.com.services.exception.ResourceNotFoundException;
+import com.lanaVitor.Reservas.com.services.exception.noExistsUserException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
+
 public class UserService {
     private EmailService emailService;
+
     private final UserRepository repository;
 
-    private LoginRepository loginRepository;
-
-    private RoomsRepository roomsRepository;
-
     @Autowired
-    public UserService(UserRepository repository, EmailService emailService, LoginRepository loginRepository, RoomsRepository roomsRepository) {
+    public UserService(EmailService emailService, UserRepository repository) {
         this.emailService = emailService;
         this.repository = repository;
-        this.loginRepository = loginRepository;
-        this.roomsRepository = roomsRepository;
     }
 
     @Transactional
     public UserRegistrationDTO registerUser(UserDTO data) {
 
-        User newUser = new User(data);
-        newUser = repository.save(newUser);
+        var user = repository.findUserByEmail(data.getEmail());
+        if (user != null) new ExistsUserException("Email já existente!");
+
+        String encryptedPassword = new BCryptPasswordEncoder().encode(data.getPassword());
+        User entity = new User(data.getName(), data.getEmail(), encryptedPassword, data.getRole());
+
+        entity = repository.save(entity);
 
         // Envio de e-mail de confirmação
-        emailService.sendEmailText(newUser.getEmail(), "Novo usuário cadastrado", "Obrigado por efetuar o cadastro em nossa plataforma!");
-
-        return new UserRegistrationDTO(newUser);
+        emailService.sendEmailText(entity.getEmail(), "Novo usuário cadastrado", "Obrigado por efetuar o cadastro em nossa plataforma!");
+        return new UserRegistrationDTO(entity);
     }
+
+    @Transactional()
+    public UserRegistrationDTO findById(Long id) {
+        User user = repository.findById(id).orElseThrow(() -> new noExistsUserException("Usuário não existente"));
+        return new UserRegistrationDTO(user);
+    }
+
+    @Transactional
     public UpdateUserDTO updateUser(UpdateUserDTO updateUserDTO, Long id) {
 
-        User entity = repository.findById(id).orElseThrow(() -> new NullEntityException("Email já cadastrado!"));
+        User entity = repository.findById(id).orElseThrow(() -> new ExistsUserException("Email já cadastrado!"));
 
         entity.setName(updateUserDTO.getName());
         entity.setEmail(updateUserDTO.getEmail());
@@ -59,11 +67,36 @@ public class UserService {
         return new UpdateUserDTO(saveUser);
     }
 
-    private boolean loginValidation(LoginDTO dto) {
-        User user = repository.findUserByEmail(dto.getEmail());
-        if (user != null && user.getPassword().equals(dto.getPassword())) {
-            loginRepository.save(new Login(user));
-            return true;
-        } else return false;
+    @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
+    public void deleteUserById(Long id) {
+
+        var entity = repository.findById(id);
+        if (entity.isEmpty()) throw new ResourceNotFoundException("Usuário não encontrado!");
+        else repository.deleteById(entity.get().getId());
+    }
+
+    public List<ListUsersDTO> findAllUsers() {
+        var list = repository.findAll();
+        if (!list.isEmpty()) {
+            return ConvertToUserDTO(list);
+        } else {
+            new ResourceNotFoundException("Recurso nao encontrado");
+        }
+        return null;
+    }
+
+    public List<ListUsersDTO> ConvertToUserDTO(List<User> listUser) {
+        List<ListUsersDTO> listDTO = new ArrayList<>();
+
+        for (User list : listUser) {
+            ListUsersDTO usersDTO = new ListUsersDTO();
+            usersDTO.setId(list.getId());
+            usersDTO.setName(list.getName());
+            usersDTO.setEmail(list.getEmail());
+            usersDTO.setRole(list.getRole());
+            listDTO.add(usersDTO);
+        }
+        return listDTO;
     }
 }

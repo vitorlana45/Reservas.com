@@ -8,6 +8,7 @@ import lombok.*;
 import java.io.Serializable;
 import java.util.Date;
 
+@Setter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,31 +19,24 @@ public class Rooms implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Setter
     private Long id;
 
-    @Setter
     private Integer roomsNumber;
 
-    @Setter
     private Date checkIn;
-    @Setter
     private Date checkOut;
 
     @Getter
-    @Setter
     private boolean rented;
 
     @ManyToOne
     @JoinColumn(name = "hotel_id")
     @JsonIgnore
     @Getter
-    @Setter
     private Hotel hotel;
 
     @ManyToOne
     @JsonIgnore
-    @Setter
     private User user;
 
 

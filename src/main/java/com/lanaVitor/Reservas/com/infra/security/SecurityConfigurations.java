@@ -11,7 +11,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,22 +24,23 @@ public class SecurityConfigurations {
     private final SecurityFilter securityFilter;
 
     @Autowired
-    public SecurityConfigurations (SecurityFilter securityFilter){
-        this.securityFilter =securityFilter;
+    public SecurityConfigurations(SecurityFilter securityFilter) {
+        this.securityFilter = securityFilter;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/users/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/users/update/").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/resort/insertResort").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/users/find/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/users/findAll/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/users/update/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/resort/restoreRoom").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/resort/reserveRooms").hasAnyRole("USER","ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/resort/{id}/reserve/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/webjars/**", "/swagger-resources/**").permitAll()
                         .anyRequest().authenticated()
                 )

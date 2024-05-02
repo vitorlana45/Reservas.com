@@ -6,13 +6,11 @@ import com.lanaVitor.Reservas.com.dtos.ReserveRoomsRequestDTO;
 import com.lanaVitor.Reservas.com.entities.Hotel;
 import com.lanaVitor.Reservas.com.entities.Rooms;
 import com.lanaVitor.Reservas.com.entities.User;
-import com.lanaVitor.Reservas.com.entities.UserRole;
 import com.lanaVitor.Reservas.com.repositories.HotelRepository;
 import com.lanaVitor.Reservas.com.repositories.RoomsRepository;
 import com.lanaVitor.Reservas.com.repositories.UserRepository;
 import com.lanaVitor.Reservas.com.services.EmailService;
 import com.lanaVitor.Reservas.com.services.HotelService;
-import com.lanaVitor.Reservas.com.services.exception.NullEntityException;
 import com.lanaVitor.Reservas.com.services.exception.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
@@ -113,7 +111,7 @@ public class HotelServiceTests {
 
     @Test
     @DisplayName("reserve rooms should return EntityNotFoundException when user non exists")
-    public void reserveRoomShouldReturnEntityNotFoundExceptionWhenUserNonExists (){
+    public void reserveRoomShouldReturnEntityNotFoundExceptionWhenUserNonExists() {
 
 
         Mockito.doThrow(EntityNotFoundException.class).when(userRepository).findUserByEmail(createUser.getEmail());
@@ -145,8 +143,6 @@ public class HotelServiceTests {
         Mockito.when(repository.findById(hotelEntityOccupied)).thenReturn(Optional.of(hotelEmptyRooms));
 
         Assertions.assertThrows(ResourceNotFoundException.class, () -> service.reserveRoom(requestDTO, hotelEntityOccupied, requestDTO));
-
-
     }
 
     @Test
@@ -160,6 +156,7 @@ public class HotelServiceTests {
         Assertions.assertEquals(hotel.getName(), expectedHotel.getName());
 
     }
+
     @Test
     @DisplayName("getInfoResort should ResourceNotFoundException when Id non exists")
     public void getInfoResortShouldResourceNotFoundExceptionWhenIdNonExist() {

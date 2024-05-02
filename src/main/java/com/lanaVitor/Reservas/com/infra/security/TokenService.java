@@ -28,7 +28,7 @@ public class TokenService {
                     .sign(algorithm);
             return token;
         } catch (JWTCreationException exception) {
-           return "";
+            return "";
         }
     }
 

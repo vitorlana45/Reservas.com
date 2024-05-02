@@ -6,11 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.extern.java.Log;
 
 import java.time.LocalDateTime;
 
-@Data
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor

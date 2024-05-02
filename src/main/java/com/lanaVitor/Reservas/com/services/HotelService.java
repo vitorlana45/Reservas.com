@@ -7,14 +7,13 @@ import com.lanaVitor.Reservas.com.entities.User;
 import com.lanaVitor.Reservas.com.repositories.HotelRepository;
 import com.lanaVitor.Reservas.com.repositories.RoomsRepository;
 import com.lanaVitor.Reservas.com.repositories.UserRepository;
-import com.lanaVitor.Reservas.com.services.exception.NullEntityException;
 import com.lanaVitor.Reservas.com.services.exception.ResourceNotFoundException;
 import com.lanaVitor.Reservas.com.services.util.UtilService;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,12 +42,14 @@ public class HotelService {
         this.emailService = emailService;
     }
 
+    @Transactional(readOnly = true)
     public HotelInfoDTO getInfoResort(Long id) {
         Optional<Hotel> hotel = repository.findById(id);
         Hotel entity = hotel.orElseThrow(() -> new ResourceNotFoundException("hotel nao encontrado"));
         return new HotelInfoDTO(entity);
     }
 
+    @Transactional(readOnly = true)
     public List<HotelDTO> getHotelDTOS() {
         List<Hotel> hotels = repository.findAll();
         if (hotels.isEmpty()) throw new ResourceNotFoundException("Recurso nao encontrado!");
@@ -59,7 +60,7 @@ public class HotelService {
         }
         return hotelDTOs;
     }
-
+    @Transactional(readOnly = true)
     public HotelDTO searchAllRooms(Long id) {
 
         Optional<Hotel> hotelOptional = repository.findById(id);
@@ -110,28 +111,7 @@ public class HotelService {
         return new ResponseRentedRoom(savedRoom);
     }
 
-    // Método para verificar se todos os quartos do hotel estão ocupados
-    private boolean checkAllRoomsOccupied(Hotel hotel) {
-        List<Rooms> rooms = hotel.getListRooms();
-        return rooms.stream().allMatch(Rooms::isRented);
-    }
-
-    // Método para encontrar um quarto disponível e atualizar o status do hotel
-    private Rooms findAvailableRoomAndUpdateStatus(Hotel hotel, Long roomId) {
-        List<Rooms> rooms = hotel.getListRooms();
-        Rooms room = rooms.stream()
-                .filter(r -> r.getId().equals(roomId) && r.getUser() == null)
-                .findFirst()
-                .orElse(null);
-
-        if (room != null) {
-            room.setRented(true);
-            return room;
-        }
-        return null;
-    }
-
-    @Transactional
+    @Transactional()
     public void deleteRoom(Long hotelId, Long roomId) {
 
         Optional<Hotel> hotelOptional = repository.findById(hotelId);
@@ -162,6 +142,25 @@ public class HotelService {
         for (int i = 0; i < roomsToAdd; i++) {
             roomsRepository.save(new Rooms(null, capturedRoomNumber, null, null, false, null, null));
         }
+    }
+
+    private Rooms findAvailableRoomAndUpdateStatus(Hotel hotel, Long roomId) {
+        List<Rooms> rooms = hotel.getListRooms();
+        Rooms room = rooms.stream()
+                .filter(r -> r.getId().equals(roomId) && r.getUser() == null)
+                .findFirst()
+                .orElse(null);
+
+        if (room != null) {
+            room.setRented(true);
+            return room;
+        }
+        return null;
+    }
+
+    private boolean checkAllRoomsOccupied(Hotel hotel) {
+        List<Rooms> rooms = hotel.getListRooms();
+        return rooms.stream().allMatch(Rooms::isRented);
     }
 
     private void sendConfirmationEmail(ReserveRoomsRequestDTO reservationData, ReserveRoomsRequestDTO userData) {

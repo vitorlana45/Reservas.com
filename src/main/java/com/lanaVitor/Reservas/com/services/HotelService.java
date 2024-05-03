@@ -42,6 +42,13 @@ public class HotelService {
         this.emailService = emailService;
     }
 
+
+    @Transactional
+    public HotelDTO create(HotelDTO hotel) {
+        var entity = repository.save(convertHotelDtoToHotel(hotel));
+        return new HotelDTO(entity);
+    }
+
     @Transactional(readOnly = true)
     public HotelInfoDTO getInfoResort(Long id) {
         Optional<Hotel> hotel = repository.findById(id);
@@ -60,6 +67,7 @@ public class HotelService {
         }
         return hotelDTOs;
     }
+
     @Transactional(readOnly = true)
     public HotelDTO searchAllRooms(Long id) {
 

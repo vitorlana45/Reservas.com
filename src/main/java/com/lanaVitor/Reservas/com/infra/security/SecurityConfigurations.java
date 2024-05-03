@@ -40,13 +40,16 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.GET, "/users/findAll/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/users/update/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/resort/restoreRoom").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/resort/{id}/reserve/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/resort/{id}/reserve").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "resort/available/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/resort/create").hasRole("ADMIN")
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/webjars/**", "/swagger-resources/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
     @Bean
     @Profile("test")
     @Order(1)
@@ -56,6 +59,7 @@ public class SecurityConfigurations {
                 .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()));
         return http.build();
     }
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();

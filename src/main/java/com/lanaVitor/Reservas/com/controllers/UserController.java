@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -43,6 +42,7 @@ public class UserController {
         this.authenticationManager = authenticationManager;
         this.tokenService = tokenService;
     }
+
 
     @PostMapping("/register")
     @Operation(summary = "cadastro de novos usuários", description = "cadastro de novos usuários")

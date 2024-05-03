@@ -26,7 +26,7 @@ public class HotelDTO {
     @Setter
     private String description;
 
-    private List<RoomsDTO> rooms = new ArrayList<>();
+    private List<RoomsDTO> rooms;
 
 
     public HotelDTO(Hotel hotel) {

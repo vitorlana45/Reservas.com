@@ -63,10 +63,17 @@ public class HotelController {
             @ApiResponse(responseCode = "404", description = "Recurso não encontrado")})
     @PostMapping("/{id}/reserve")
     public ResponseEntity<ResponseRentedRoom> reserveRooms(@PathVariable Long id, @RequestBody ReserveRoomsRequestDTO requestDTO) {
-
         ResponseRentedRoom data = hotelService.reserveRoom(requestDTO, id, requestDTO);
         return ResponseEntity.ok().body(data);
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/create")
+    public ResponseEntity<HotelDTO> createResort (@RequestBody HotelDTO hotel){
+        HotelDTO entity = hotelService.create(hotel);
+        return ResponseEntity.ok().body(entity);
+    }
+
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @Operation(summary = "Exclusão do quarto ",description = "Passando o ID do Resort exemplo disponível: 1,  e passando o numero do quarto que contem ou nao um usuário ele será exluido e resetado automaticamente. id do quarto que contem usuários 1 e 2, quartos vagos 3 ao 10")

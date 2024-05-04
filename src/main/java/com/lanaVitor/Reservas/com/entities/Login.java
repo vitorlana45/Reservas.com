@@ -1,6 +1,7 @@
 package com.lanaVitor.Reservas.com.entities;
 
 
+import com.lanaVitor.Reservas.com.dtos.LoginDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,10 +32,9 @@ public class Login {
         this.loginMoment = LocalDateTime.now();
     }
 
-    public Login(User entity) {
+    public Login(LoginDTO entity) {
         id = entity.getId();
         email = entity.getEmail();
-        password = entity.getPassword();
         loginMoment = LocalDateTime.now();
     }
 }

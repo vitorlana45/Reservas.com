@@ -1,10 +1,9 @@
 package com.lanaVitor.Reservas.com.services;
 
-import com.lanaVitor.Reservas.com.dtos.ListUsersDTO;
-import com.lanaVitor.Reservas.com.dtos.UpdateUserDTO;
-import com.lanaVitor.Reservas.com.dtos.UserDTO;
-import com.lanaVitor.Reservas.com.dtos.UserRegistrationDTO;
+import com.lanaVitor.Reservas.com.dtos.*;
+import com.lanaVitor.Reservas.com.entities.Login;
 import com.lanaVitor.Reservas.com.entities.User;
+import com.lanaVitor.Reservas.com.repositories.LoginRepository;
 import com.lanaVitor.Reservas.com.repositories.UserRepository;
 import com.lanaVitor.Reservas.com.services.exception.ExistsUserException;
 import com.lanaVitor.Reservas.com.services.exception.ResourceNotFoundException;
@@ -23,11 +22,14 @@ public class UserService {
     private EmailService emailService;
     private final UserRepository repository;
 
+    private final LoginRepository loginRepository;
+
 
     @Autowired
-    public UserService(EmailService emailService, UserRepository repository) {
+    public UserService(EmailService emailService, UserRepository repository,LoginRepository loginRepository) {
         this.emailService = emailService;
         this.repository = repository;
+        this.loginRepository =loginRepository;
     }
 
     @Transactional
@@ -44,6 +46,10 @@ public class UserService {
         // Envio de e-mail de confirmação
         emailService.sendEmailText(entity.getEmail(), "Novo usuário cadastrado", "Obrigado por efetuar o cadastro em nossa plataforma!");
         return new UserRegistrationDTO(entity);
+    }
+
+    public void saveLogin(LoginDTO data) {
+        loginRepository.save(new Login(data));
     }
 
     @Transactional()

@@ -34,7 +34,6 @@ public class UpdateUserDTO {
         name = entity.getName();
         email = entity.getEmail();
         password = entity.getPassword();
-        role = entity.getRole();
     }
 }
 

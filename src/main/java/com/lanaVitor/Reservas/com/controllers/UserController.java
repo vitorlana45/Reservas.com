@@ -102,15 +102,10 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "A requisição foi executada com secusso."),
             @ApiResponse(responseCode = "404", description = "Recurso Indisponivel, Not Found")})
-    public ResponseEntity<UpdateUserDTO> userUpdate(@RequestBody UpdateUserDTO updateUserDTO, @PathVariable Long id) {
+    public ResponseEntity<UserUpdateResponse> userUpdate(@RequestBody UpdateUserDTO updateUserDTO, @PathVariable Long id) {
 
-        User user = userRepository.findById(id).orElseThrow(() -> new noExistsUserException("Recurso não encontrado"));
-        if (user != null) {
-            UpdateUserDTO entity = service.updateUser(updateUserDTO, id);
+            UserUpdateResponse entity = service.updateUser(updateUserDTO, id);
             return ResponseEntity.ok().body(entity);
-        } else {
-            return ResponseEntity.badRequest().build();
-        }
     }
 
     @PreAuthorize("hasAnyRole('USER','ADMIN')")

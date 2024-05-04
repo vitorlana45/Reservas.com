@@ -59,17 +59,18 @@ public class UserService {
     }
 
     @Transactional
-    public UpdateUserDTO updateUser(UpdateUserDTO updateUserDTO, Long id) {
+    public UserUpdateResponse updateUser(UpdateUserDTO updateUserDTO, Long id) {
 
-        User entity = repository.findById(id).orElseThrow(() -> new ExistsUserException("Email já cadastrado!"));
+        User entity = repository.findById(id).orElseThrow(() -> new ExistsUserException("Usuário não encontrado"));
 
         entity.setName(updateUserDTO.getName());
         entity.setEmail(updateUserDTO.getEmail());
-        entity.setPassword(updateUserDTO.getPassword());
+        String encryptedPassword = new BCryptPasswordEncoder().encode(updateUserDTO.getPassword());
+        entity.setPassword(encryptedPassword);
 
         User saveUser = repository.save(entity);
 
-        return new UpdateUserDTO(saveUser);
+        return new UserUpdateResponse(saveUser);
     }
 
     @Transactional
@@ -103,5 +104,12 @@ public class UserService {
             listDTO.add(usersDTO);
         }
         return listDTO;
+    }
+
+    private UserDTO hidePassword(User user){
+        User entity = new User();
+        entity.setName(user.getUsername());
+        entity.setEmail(user.getEmail());
+        return new UserDTO(entity);
     }
 }

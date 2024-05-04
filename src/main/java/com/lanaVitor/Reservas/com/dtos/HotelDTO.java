@@ -1,9 +1,6 @@
 package com.lanaVitor.Reservas.com.dtos;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lanaVitor.Reservas.com.entities.Hotel;
-import com.lanaVitor.Reservas.com.entities.Rooms;
-import com.lanaVitor.Reservas.com.entities.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +23,7 @@ public class HotelDTO {
     @Setter
     private String description;
 
-    private List<RoomsDTO> rooms;
+    private List<RoomsDTO> rooms = new ArrayList<>();
 
 
     public HotelDTO(Hotel hotel) {

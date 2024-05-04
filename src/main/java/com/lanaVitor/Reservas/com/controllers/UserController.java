@@ -85,7 +85,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "busca por usuario atraves do ID")
+    @Operation(summary = "busca por todos usuario ")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "A requisição foi executada com secusso."),
             @ApiResponse(responseCode = "404", description = "Recurso Indisponivel, Not Found")})

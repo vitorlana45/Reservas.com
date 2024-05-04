@@ -19,11 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-
 public class UserService {
     private EmailService emailService;
-
     private final UserRepository repository;
+
 
     @Autowired
     public UserService(EmailService emailService, UserRepository repository) {

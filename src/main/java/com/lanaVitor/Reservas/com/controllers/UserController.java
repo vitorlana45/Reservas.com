@@ -5,12 +5,12 @@ import com.lanaVitor.Reservas.com.entities.User;
 import com.lanaVitor.Reservas.com.infra.security.TokenService;
 import com.lanaVitor.Reservas.com.repositories.UserRepository;
 import com.lanaVitor.Reservas.com.services.UserService;
-import com.lanaVitor.Reservas.com.services.exception.noExistsUserException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,6 +21,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+
 
 @Validated
 @RestController
@@ -58,6 +59,7 @@ public class UserController {
         return ResponseEntity.created(uri).body(dto);
     }
 
+    @Cacheable("cache")
     @Operation(summary = "Login de usuários cadastrados", description = "usuarios cadastrador exemplo: angela@gmail.com")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "A requisição foi executada com secusso."),
@@ -85,6 +87,7 @@ public class UserController {
         return ResponseEntity.ok().body(entity);
     }
 
+    @Cacheable("cache")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "busca por todos usuario ")
     @ApiResponses(value = {
@@ -104,13 +107,13 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "Recurso Indisponivel, Not Found")})
     public ResponseEntity<UserUpdateResponse> userUpdate(@RequestBody UpdateUserDTO updateUserDTO, @PathVariable Long id) {
 
-            UserUpdateResponse entity = service.updateUser(updateUserDTO, id);
-            return ResponseEntity.ok().body(entity);
+        UserUpdateResponse entity = service.updateUser(updateUserDTO, id);
+        return ResponseEntity.ok().body(entity);
     }
 
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @Operation(summary = "deleção de usuários")
-            @ApiResponses(value = {
+    @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "A requisição foi executada com secusso."),
             @ApiResponse(responseCode = "422", description = "Recurso Indisponivel, Unprocessable Entity ")})
     @DeleteMapping("/delete/{id}")

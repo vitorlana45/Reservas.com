@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +46,7 @@ public class HotelController {
         return ResponseEntity.ok().body(list);
     }
 
+    @Cacheable("cache")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @Operation(summary = "Informações do resort", description = "Informações completa do resort")
     @ApiResponses(value = {

@@ -75,10 +75,13 @@ public class HotelService {
         Hotel hotelEntity = hotelOptional.orElseThrow(() -> new ResourceNotFoundException("Hotel não encontrado"));
 
         List<Rooms> listRooms = hotelEntity.getListRooms();
-
+        // problemas -> quando busco o resort a lista de quartos Vem vazia
+            // pontos a serem vistos
+                    // mapeamento dos DTOS
+                        // Conversao da entidade para o DTO a ser devolvido na requisação
 
         for (Rooms room : listRooms) {
-            if (room.isAvailable() & room.getUser() == null) { // método isAvailable() para verificar a disponibilidade
+            if (room.isAvailable() && room.getUser() == null) { // método isAvailable() para verificar a disponibilidade
                 HotelDTO hotelDTO = new HotelDTO(hotelEntity);
                 hotelDTO.getRooms().add(new RoomsDTO(room)); // Adiciona o quarto disponível ao DTO do hotel
             }
@@ -191,15 +194,19 @@ public class HotelService {
         List<Rooms> roomsList = new ArrayList<>();
 
         int count = 0;
+
         // Converte cada RoomsDTO para Rooms e adiciona à lista
         for (RoomsDTO roomsDTO : data.getRooms()) {
             Rooms rooms = new Rooms();
             rooms.setId(roomsDTO.getId());
             rooms.setRoomsNumber(roomsDTO.getRoomsNumber());
             String rented = roomsDTO.getRented();
+            entity.addRooms(rooms);
             if (rented.equals("false")) {
                 count++;
+
             }
+
             roomsList.add(rooms);
         }
 

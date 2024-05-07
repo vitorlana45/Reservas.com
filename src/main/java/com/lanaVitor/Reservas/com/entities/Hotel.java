@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
 
 import java.util.*;
 
@@ -29,7 +30,7 @@ public class Hotel {
 
     @Getter
     @Setter
-    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "hotel")
     private List<Rooms> listRooms = new ArrayList<>();
 
     @OneToMany

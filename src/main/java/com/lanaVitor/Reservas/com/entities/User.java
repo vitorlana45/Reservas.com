@@ -86,6 +86,8 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (this.role.equals(UserRole.ADMIN)) {
             return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+        }if(role.getRole().isEmpty() || role.getRole().isBlank()) {
+            return List.of(new SimpleGrantedAuthority("ROLE_USER"));
         }else {
             return List.of(new SimpleGrantedAuthority("ROLE_USER"));
         }

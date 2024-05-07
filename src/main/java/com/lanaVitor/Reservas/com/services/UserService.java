@@ -3,6 +3,7 @@ package com.lanaVitor.Reservas.com.services;
 import com.lanaVitor.Reservas.com.dtos.*;
 import com.lanaVitor.Reservas.com.entities.Login;
 import com.lanaVitor.Reservas.com.entities.User;
+import com.lanaVitor.Reservas.com.entities.UserRole;
 import com.lanaVitor.Reservas.com.repositories.LoginRepository;
 import com.lanaVitor.Reservas.com.repositories.UserRepository;
 import com.lanaVitor.Reservas.com.services.exception.ExistsUserException;
@@ -14,8 +15,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.management.relation.Role;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -37,6 +40,10 @@ public class UserService {
 
         var user = repository.findUserByEmail(data.getEmail());
         if (user != null) new ExistsUserException("Email já existente!");
+
+        if (Optional.ofNullable(data.getRole()).map(Enum::name).orElse("").isEmpty()) {
+            data.setRole(UserRole.USER);
+        }
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.getPassword());
         User entity = new User(data.getName(), data.getEmail(), encryptedPassword, data.getRole());

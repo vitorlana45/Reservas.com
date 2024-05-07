@@ -27,6 +27,7 @@ public class UserDTO {
     private String password;
 
     @Getter
+    @Setter
     private UserRole role;
 
     public UserDTO(User entity) {

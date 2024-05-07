@@ -1,6 +1,7 @@
 package com.lanaVitor.Reservas.com.controllers;
 
 import com.lanaVitor.Reservas.com.dtos.*;
+import com.lanaVitor.Reservas.com.entities.Hotel;
 import com.lanaVitor.Reservas.com.services.HotelService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -36,7 +37,7 @@ public class HotelController {
     }
 
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    @GetMapping("/{id}/available/rooms")
+    @GetMapping("/available/rooms/{id}")
     @Operation(summary = "busca de todos os quartos disponíveis", description = "passando o id do Resort irá trazer todos os quartos disponíveis")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "A requisnição foi executada com secusso."),

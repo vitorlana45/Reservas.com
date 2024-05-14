@@ -30,7 +30,7 @@ public class Hotel {
 
     @Getter
     @Setter
-    @OneToMany(mappedBy = "hotel")
+    @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Rooms> listRooms = new ArrayList<>();
 
     @OneToMany

@@ -25,7 +25,6 @@ public class HotelDTO {
 
     private List<RoomsDTO> rooms = new ArrayList<>();
 
-
     public HotelDTO(Hotel hotel) {
         this.id = hotel.getId();
         this.name = hotel.getName();

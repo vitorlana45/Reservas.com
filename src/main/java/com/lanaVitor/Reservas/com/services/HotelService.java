@@ -42,17 +42,16 @@ public class HotelService {
         this.emailService = emailService;
     }
 
-
     @Transactional
-    public HotelDTO create(HotelDTO hotel) {
-        var entity = repository.save(convertHotelDtoToHotel(hotel));
-        return new HotelDTO(entity);
+    public CreateHotelDTO create(CreateHotelDTO hotel) {
+        var entity = repository.save(convertToCreateHotelDTO(hotel));   //ok
+        return new CreateHotelDTO(entity);
     }
 
     @Transactional(readOnly = true)
     public HotelInfoDTO getInfoResort(Long id) {
         Optional<Hotel> hotel = repository.findById(id);
-        Hotel entity = hotel.orElseThrow(() -> new ResourceNotFoundException("hotel nao encontrado"));
+        Hotel entity = hotel.orElseThrow(() -> new ResourceNotFoundException("hotel nao encontrado")); //ok
         return new HotelInfoDTO(entity);
     }
 
@@ -75,10 +74,6 @@ public class HotelService {
         Hotel hotelEntity = hotelOptional.orElseThrow(() -> new ResourceNotFoundException("Hotel não encontrado"));
 
         List<Rooms> listRooms = hotelEntity.getListRooms();
-        // problemas -> quando busco o resort a lista de quartos Vem vazia
-            // pontos a serem vistos
-                    // mapeamento dos DTOS
-                        // Conversao da entidade para o DTO a ser devolvido na requisação
 
         for (Rooms room : listRooms) {
             if (room.isAvailable() && room.getUser() == null) { // método isAvailable() para verificar a disponibilidade
@@ -88,6 +83,23 @@ public class HotelService {
         }
         return new HotelDTO(hotelEntity);
     }
+
+    @Transactional
+    public void addRooms(Long id, CreateRoomsDTO roomsDTO) {
+
+        Hotel hotel = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("hotel nao existe!"));
+
+        Rooms newRoom = convertRoom(roomsDTO);
+
+        List<Rooms> roomsEntity = hotel.getListRooms();
+
+        roomsEntity.add(newRoom);
+
+        newRoom.setHotel(hotel);
+
+        repository.save(hotel);
+    }
+
 
     @Transactional
     public ResponseRentedRoom reserveRoom(ReserveRoomsRequestDTO data, Long hotelId, ReserveRoomsRequestDTO user) {
@@ -182,6 +194,24 @@ public class HotelService {
         } else {
             throw new ResourceNotFoundException("para reservar um quarto e nescessario ter cadastro!");
         }
+    }
+
+    private Hotel convertToCreateHotelDTO(CreateHotelDTO entity) {
+        var hotel = new Hotel();
+        hotel.setName(entity.getName());
+        hotel.setLocation(entity.getLocation());
+        hotel.setDescription(entity.getDescription());
+        return hotel;
+    }
+
+    private Rooms convertRoom(CreateRoomsDTO roomsDTO){
+        var entity = new Rooms();
+
+        entity.setRoomsNumber(roomsDTO.getRoomsNumber());
+        entity.setCheckIn(roomsDTO.getCheckIn());
+        entity.setCheckOut(roomsDTO.getCheckOut());
+
+        return entity;
     }
 
     private Hotel convertHotelDtoToHotel(HotelDTO data) {

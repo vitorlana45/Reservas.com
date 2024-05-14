@@ -1,7 +1,6 @@
 package com.lanaVitor.Reservas.com.controllers;
 
 import com.lanaVitor.Reservas.com.dtos.*;
-import com.lanaVitor.Reservas.com.entities.Hotel;
 import com.lanaVitor.Reservas.com.services.HotelService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -11,7 +10,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -72,9 +73,16 @@ public class HotelController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
-    public ResponseEntity<HotelDTO> createResort (@RequestBody HotelDTO hotel){
-        HotelDTO entity = hotelService.create(hotel);
+    public ResponseEntity<CreateHotelDTO> createResort (@RequestBody CreateHotelDTO hotel){
+        CreateHotelDTO entity = hotelService.create(hotel);
         return ResponseEntity.ok().body(entity);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/{id}/addRoom")
+    public ResponseEntity<Void> addRooms (@PathVariable Long id, @RequestBody CreateRoomsDTO createRoomsDTORoomsDTO){
+         hotelService.addRooms(id, createRoomsDTORoomsDTO);
+        return ResponseEntity.ok().build();
     }
 
 

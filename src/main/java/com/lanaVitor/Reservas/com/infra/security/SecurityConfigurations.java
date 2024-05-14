@@ -37,6 +37,7 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.POST, "/users/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/resort/create/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/resort/{id}/addRoom").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/users/find/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/users/findAll/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/users/update/**").hasAnyRole("USER", "ADMIN")

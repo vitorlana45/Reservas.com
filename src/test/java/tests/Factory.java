@@ -5,6 +5,7 @@ import com.lanaVitor.Reservas.com.entities.Hotel;
 import com.lanaVitor.Reservas.com.entities.Rooms;
 import com.lanaVitor.Reservas.com.entities.User;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -42,16 +43,13 @@ public class Factory {
         return roomsList;
     }
     public static Rooms createRoom() {
-        Date checkInDate = new Date(); // Data atual
-        Date checkOutDate = new Date(124, 3, 20); // 2024-04-20 (ano, mês - 1, dia)
-
         Hotel hotel = createHotel(); // Obter o hotel criado
 
         Rooms room = new Rooms();
         room.setId(1L);
         room.setRoomsNumber(1);
-        room.setCheckIn(checkInDate);
-        room.setCheckOut(checkOutDate);
+        room.setCheckIn(LocalDateTime.now());
+        room.setCheckOut(LocalDateTime.now());
         room.setRented(false);
         room.setHotel(hotel); // Associar o hotel ao quarto
 
@@ -73,14 +71,26 @@ public class Factory {
 
 
     public static ReserveRoomsRequestDTO reservationDTO() {
-        Date checkIn = new Date(); // Data atual
-        Date checkOut = new Date(124, 3, 20); // 2024-04-20 (ano, mês - 1, dia)
+        LocalDateTime checkIn = LocalDateTime.now(); // Data atual
+        LocalDateTime checkOut = LocalDateTime.now().plusDays(2).plusHours(3);
         ReservationHotelDTO reservationHotelDTO = new ReservationHotelDTO(checkIn, checkOut, 1L);
 
         VerificationRegisterDTO verificationRegisterDTO = new VerificationRegisterDTO(createUser().getEmail());
 
         return new ReserveRoomsRequestDTO(reservationHotelDTO, verificationRegisterDTO);
     }
+
+    public static ReserveRoomsRequestDTO reservationWithOutUserDTO() {
+        LocalDateTime checkIn = LocalDateTime.now(); // Data atual
+        LocalDateTime checkOut = LocalDateTime.now().plusDays(2).plusHours(3);
+        ReservationHotelDTO reservationHotelDTO = new ReservationHotelDTO(checkIn, checkOut, 1L);
+
+        VerificationRegisterDTO verificationRegisterDTO = new VerificationRegisterDTO(createEmailNotFoundOnDataBase().getEmail());
+
+        return new ReserveRoomsRequestDTO(reservationHotelDTO, verificationRegisterDTO);
+    }
+
+
 
     //TODO  CONCERTAR O TESTE POIS CONTEM ROLE
     public static User createUser() {
@@ -114,8 +124,8 @@ public class Factory {
     }
 
     public static ReserveRoomsRequestDTO emailNotFoundReservationDTO() {
-        Date checkIn = new Date(); // Data atual
-        Date checkOut = new Date(124, 3, 20); // 2024-04-20 (ano, mês - 1, dia)
+        LocalDateTime checkIn = LocalDateTime.now(); // Data atual
+        LocalDateTime checkOut = LocalDateTime.now().plusDays(2).plusHours(3);
         ReservationHotelDTO reservationHotelDTO = new ReservationHotelDTO(checkIn, checkOut, 1L);
 
         VerificationRegisterDTO verificationRegisterDTO = new VerificationRegisterDTO(createEmailNotFoundOnDataBase().getEmail());

@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static tests.Factory.reservationWithOutUserDTO;
 
 
 @ExtendWith(SpringExtension.class)
@@ -114,9 +115,11 @@ public class HotelServiceTests {
     public void reserveRoomShouldReturnEntityNotFoundExceptionWhenUserNonExists() {
 
 
-        Mockito.doThrow(EntityNotFoundException.class).when(userRepository).findUserByEmail(createUser.getEmail());
+        ReserveRoomsRequestDTO nonExistUser = reservationWithOutUserDTO();
 
-        Assertions.assertThrows(EntityNotFoundException.class, () -> service.reserveRoom(notFoundReservationDTO, existingId, requestDTO));
+        Mockito.doThrow(EntityNotFoundException.class).when(userRepository).findUserByEmail(nonExistUser.getUser().getEmail());
+
+        Assertions.assertThrows(EntityNotFoundException.class, () -> service.reserveRoom(notFoundReservationDTO, hotelDTO.getId(), nonExistUser));
     }
 
     @Test

@@ -7,14 +7,21 @@ import com.lanaVitor.Reservas.com.entities.User;
 import com.lanaVitor.Reservas.com.repositories.HotelRepository;
 import com.lanaVitor.Reservas.com.repositories.RoomsRepository;
 import com.lanaVitor.Reservas.com.repositories.UserRepository;
+import com.lanaVitor.Reservas.com.services.exception.InvalidReservationDateException;
 import com.lanaVitor.Reservas.com.services.exception.ResourceNotFoundException;
 import com.lanaVitor.Reservas.com.services.util.UtilService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +30,7 @@ import java.util.Optional;
 public class HotelService {
 
     private static final Integer limitQuantityRoom = 10;
+    private final WebApplicationContext webApplicationContext;
 
     private HotelRepository repository;
     private UserRepository userRepository;
@@ -32,11 +40,12 @@ public class HotelService {
     int capturedRoomNumber;
 
     @Autowired
-    public HotelService(HotelRepository repository, UserRepository userRepository, RoomsRepository roomsRepository, EmailService emailService) {
+    public HotelService(HotelRepository repository, UserRepository userRepository, RoomsRepository roomsRepository, EmailService emailService, WebApplicationContext webApplicationContext) {
         this.repository = repository;
         this.userRepository = userRepository;
         this.roomsRepository = roomsRepository;
         this.emailService = emailService;
+        this.webApplicationContext = webApplicationContext;
     }
 
     @Transactional
@@ -101,35 +110,39 @@ public class HotelService {
 
     @Transactional
     public ResponseRentedRoom reserveRoom(ReserveRoomsRequestDTO data, Long hotelId, ReserveRoomsRequestDTO user) {
-        Optional<Hotel> hotelOptional = repository.findById(hotelId);
-        Hotel hotelEntity = hotelOptional.orElseThrow(() -> new ResourceNotFoundException("Hotel não encontrado"));
 
-        Rooms room = findAvailableRoomAndUpdateStatus(hotelEntity, data.getReservationDTO().getNumberRoom());
+            validateCheckInAndCheckOutDates(data);
 
-        boolean allRoomsOccupied = checkAllRoomsOccupied(hotelEntity);
-        if (allRoomsOccupied) {
-            hotelEntity.setStatus("Cheio");
-            repository.save(hotelEntity);
-        } else {
-            hotelEntity.setStatus("Disponível");
-            repository.save(hotelEntity);
-        }
+            Optional<Hotel> hotelOptional = repository.findById(hotelId);
+            Hotel hotelEntity = hotelOptional.orElseThrow(() -> new ResourceNotFoundException("Hotel não encontrado"));
 
-        if (room == null) {
-            throw new ResourceNotFoundException("Quarto indisponivel");
-        }
+            Rooms room = findAvailableRoomAndUpdateStatus(hotelEntity, data.getReservationDTO().getNumberRoom());
 
-        UserDetails entity = verificationUserExists(user.getUser());
+            boolean allRoomsOccupied = checkAllRoomsOccupied(hotelEntity);
+            if (allRoomsOccupied) {
+                hotelEntity.setStatus("Cheio");
+                repository.save(hotelEntity);
+            } else {
+                hotelEntity.setStatus("Disponível");
+                repository.save(hotelEntity);
+            }
 
-        room.setUser((User) entity);
-        room.setCheckIn(data.getReservationDTO().getCheckIn());
-        room.setCheckOut(data.getReservationDTO().getCheckOut());
-        room.setRented(true);
+            if (room == null) {
+                throw new ResourceNotFoundException("Quarto indisponivel");
+            }
 
-        Rooms savedRoom = roomsRepository.save(room);
+            UserDetails entity = verificationUserExists(user.getUser());
 
-        sendConfirmationEmail(data, user);
-        return new ResponseRentedRoom(savedRoom);
+            room.setUser((User) entity);
+            room.setCheckIn(data.getReservationDTO().getCheckIn());
+            room.setCheckOut(data.getReservationDTO().getCheckOut());
+            room.setRented(true);
+
+            Rooms savedRoom = roomsRepository.save(room);
+
+            sendConfirmationEmail(data, user);
+
+            return new ResponseRentedRoom(savedRoom);
     }
 
     @Transactional()
@@ -156,6 +169,19 @@ public class HotelService {
             roomsRepository.deleteById(roomId);
         } catch (RuntimeException e) {
             throw new ResourceNotFoundException("Erro ao excluir o quarto.");
+        }
+    }
+
+
+    private void validateCheckInAndCheckOutDates(ReserveRoomsRequestDTO data) {
+        LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
+
+        LocalDateTime checkIn = data.getReservationDTO().getCheckIn();
+        LocalDateTime checkOut = data.getReservationDTO().getCheckOut();
+
+        // Verificar se as datas de check-in e check-out são no futuro
+        if (!checkIn.isAfter(now) || !checkOut.isAfter(now)) {
+            throw new InvalidReservationDateException("A data de check-in ou check-out é inválida. Ambas devem ser no futuro ou presente!.");
         }
     }
 
@@ -196,7 +222,7 @@ public class HotelService {
         return hotel;
     }
 
-    private Rooms convertRoom(CreateRoomsDTO roomsDTO){
+    private Rooms convertRoom(CreateRoomsDTO roomsDTO) {
         var entity = new Rooms();
 
         entity.setRoomsNumber(roomsDTO.getRoomsNumber());

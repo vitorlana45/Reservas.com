@@ -79,4 +79,16 @@ public class ResourceExceptionHandler {
         error.setPath(request.getRequestURI());
         return ResponseEntity.status(status).body(err);
     }
+
+
+    @ExceptionHandler(InvalidReservationDateException.class)
+    public ResponseEntity<StandardError> InvalidReservationDateException(InvalidReservationDateException ex, HttpServletRequest request) {
+        status = HttpStatus.BAD_REQUEST;
+        err.setTimestamp(Instant.now());
+        err.setStatus(status.value());
+        err.setError("Validation exception");
+        err.setMessage(ex.getMessage());
+        err.setPath(request.getRequestURI());
+        return ResponseEntity.status(status).body(err);
+    }
 }

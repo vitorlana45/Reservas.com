@@ -2,7 +2,9 @@ package com.lanaVitor.Reservas.com.services.util;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
@@ -10,11 +12,11 @@ public class UtilService {
 
     private static final double PRICE_PER_DAY = 85;
 
-    public static String calculateTotalPrice(Date checkIn, Date checkOut) {
+    public static String calculateTotalPrice(LocalDateTime checkIn, LocalDateTime checkOut) {
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        String checkInForSending = sdf.format(checkIn);
-        String checkOutForSending = sdf.format(checkOut);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        String checkInForSending = checkIn.format(formatter);
+        String checkOutForSending = checkOut.format(formatter);
 
         long daysBetween = calculateDaysBetween(checkIn, checkOut);
         double totalPrice = daysBetween * PRICE_PER_DAY;
@@ -27,9 +29,9 @@ public class UtilService {
         return sb;
     }
 
-    private static long calculateDaysBetween(Date checkIn, Date checkOut) {
-        LocalDate localCheckIn = checkIn.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        LocalDate localCheckOut = checkOut.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    private static long calculateDaysBetween(LocalDateTime checkIn, LocalDateTime checkOut) {
+        LocalDate localCheckIn = checkIn.atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate localCheckOut = checkOut.atZone(ZoneId.systemDefault()).toLocalDate();
         return ChronoUnit.DAYS.between(localCheckIn, localCheckOut);
     }
 }

@@ -19,17 +19,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
 @Service
 public class HotelService {
 
     private static final Integer limitQuantityRoom = 10;
 
     private HotelRepository repository;
-    private UserRepository userRepositoy;
-
+    private UserRepository userRepository;
     private RoomsRepository roomsRepository;
-
     private EmailService emailService;
 
     int capturedRoomNumber;
@@ -37,7 +34,7 @@ public class HotelService {
     @Autowired
     public HotelService(HotelRepository repository, UserRepository userRepository, RoomsRepository roomsRepository, EmailService emailService) {
         this.repository = repository;
-        this.userRepositoy = userRepository;
+        this.userRepository = userRepository;
         this.roomsRepository = roomsRepository;
         this.emailService = emailService;
     }
@@ -85,9 +82,9 @@ public class HotelService {
     }
 
     @Transactional
-    public void addRooms(Long id, CreateRoomsDTO roomsDTO) {
+    public void addRooms(Long hotelId, CreateRoomsDTO roomsDTO) {
 
-        Hotel hotel = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("hotel nao existe!"));
+        Hotel hotel = repository.findById(hotelId).orElseThrow(() -> new EntityNotFoundException("hotel nao existe!"));
 
         Rooms newRoom = convertRoom(roomsDTO);
 
@@ -97,9 +94,10 @@ public class HotelService {
 
         newRoom.setHotel(hotel);
 
+        newRoom.getHotel().setStatus("Disponivel");
+
         repository.save(hotel);
     }
-
 
     @Transactional
     public ResponseRentedRoom reserveRoom(ReserveRoomsRequestDTO data, Long hotelId, ReserveRoomsRequestDTO user) {
@@ -159,12 +157,6 @@ public class HotelService {
         } catch (RuntimeException e) {
             throw new ResourceNotFoundException("Erro ao excluir o quarto.");
         }
-
-        List<Rooms> listVerification = roomsRepository.findAll();
-        int roomsToAdd = limitQuantityRoom - listVerification.size();
-        for (int i = 0; i < roomsToAdd; i++) {
-            roomsRepository.save(new Rooms(null, capturedRoomNumber, null, null, false, null, null));
-        }
     }
 
     private Rooms findAvailableRoomAndUpdateStatus(Hotel hotel, Long roomId) {
@@ -208,46 +200,15 @@ public class HotelService {
         var entity = new Rooms();
 
         entity.setRoomsNumber(roomsDTO.getRoomsNumber());
-        entity.setCheckIn(roomsDTO.getCheckIn());
-        entity.setCheckOut(roomsDTO.getCheckOut());
+        entity.setCheckIn(null);
+        entity.setCheckOut(null);
 
-        return entity;
-    }
-
-    private Hotel convertHotelDtoToHotel(HotelDTO data) {
-        Hotel entity = new Hotel();
-        entity.setName(data.getName());
-        entity.setLocation(data.getLocation());
-        entity.setDescription(data.getDescription());
-
-        // Inicializa a lista de quartos na entidade Hotel
-        List<Rooms> roomsList = new ArrayList<>();
-
-        int count = 0;
-
-        // Converte cada RoomsDTO para Rooms e adiciona à lista
-        for (RoomsDTO roomsDTO : data.getRooms()) {
-            Rooms rooms = new Rooms();
-            rooms.setId(roomsDTO.getId());
-            rooms.setRoomsNumber(roomsDTO.getRoomsNumber());
-            String rented = roomsDTO.getRented();
-            entity.addRooms(rooms);
-            if (rented.equals("false")) {
-                count++;
-
-            }
-
-            roomsList.add(rooms);
-        }
-
-        entity.setListRooms(roomsList);
-        entity.setStatus(count != 0 ? "Disponivel" : "Cheio");
         return entity;
     }
 
     private UserDetails verificationUserExists(VerificationRegisterDTO data) {
         try {
-            return userRepositoy.findUserByEmail(data.getEmail());
+            return userRepository.findUserByEmail(data.getEmail());
         } catch (RuntimeException e) {
             throw new EntityNotFoundException("É necessario ter cadastro para reservar um quarto");
         }

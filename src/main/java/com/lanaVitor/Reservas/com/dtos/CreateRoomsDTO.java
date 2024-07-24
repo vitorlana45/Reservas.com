@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 
@@ -21,12 +22,8 @@ public class CreateRoomsDTO {
     @NotBlank
     @NotNull
     private Integer roomsNumber;
-    private Date checkIn;
-    private Date checkOut;
 
     public CreateRoomsDTO (Rooms rooms){
         roomsNumber = rooms.getRoomsNumber();
-        checkIn = rooms.getCheckIn();
-        checkOut = rooms.getCheckOut();
     }
 }

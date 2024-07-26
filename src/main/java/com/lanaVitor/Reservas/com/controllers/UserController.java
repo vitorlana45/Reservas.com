@@ -1,6 +1,7 @@
 package com.lanaVitor.Reservas.com.controllers;
 
 import com.lanaVitor.Reservas.com.dtos.*;
+import com.lanaVitor.Reservas.com.dtos.records.LoginResponseDTO;
 import com.lanaVitor.Reservas.com.entities.User;
 import com.lanaVitor.Reservas.com.infra.security.TokenService;
 import com.lanaVitor.Reservas.com.repositories.UserRepository;

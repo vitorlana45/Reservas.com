@@ -1,4 +1,4 @@
-package com.lanaVitor.Reservas.com.dtos;
+package com.lanaVitor.Reservas.com.dtos.records;
 
 public record LoginResponseDTO(String token) {
 }

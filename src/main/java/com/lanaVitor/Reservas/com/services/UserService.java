@@ -112,11 +112,4 @@ public class UserService {
         }
         return listDTO;
     }
-
-    private UserDTO hidePassword(User user){
-        User entity = new User();
-        entity.setName(user.getUsername());
-        entity.setEmail(user.getEmail());
-        return new UserDTO(entity);
-    }
 }

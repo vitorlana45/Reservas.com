@@ -12,16 +12,15 @@ import com.lanaVitor.Reservas.com.services.exception.ResourceNotFoundException;
 import com.lanaVitor.Reservas.com.services.util.UtilService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +29,6 @@ import java.util.Optional;
 public class HotelService {
 
     private static final Integer limitQuantityRoom = 10;
-    private final WebApplicationContext webApplicationContext;
 
     private HotelRepository repository;
     private UserRepository userRepository;
@@ -45,7 +43,6 @@ public class HotelService {
         this.userRepository = userRepository;
         this.roomsRepository = roomsRepository;
         this.emailService = emailService;
-        this.webApplicationContext = webApplicationContext;
     }
 
     @Transactional
@@ -111,38 +108,38 @@ public class HotelService {
     @Transactional
     public ResponseRentedRoom reserveRoom(ReserveRoomsRequestDTO data, Long hotelId, ReserveRoomsRequestDTO user) {
 
-            validateCheckInAndCheckOutDates(data);
+        validateCheckInAndCheckOutDates(data);
 
-            Optional<Hotel> hotelOptional = repository.findById(hotelId);
-            Hotel hotelEntity = hotelOptional.orElseThrow(() -> new ResourceNotFoundException("Hotel não encontrado"));
+        Optional<Hotel> hotelOptional = repository.findById(hotelId);
+        Hotel hotelEntity = hotelOptional.orElseThrow(() -> new ResourceNotFoundException("Hotel não encontrado"));
 
-            Rooms room = findAvailableRoomAndUpdateStatus(hotelEntity, data.getReservationDTO().getNumberRoom());
+        Rooms room = findAvailableRoomAndUpdateStatus(hotelEntity, data.getReservationDTO().getNumberRoom());
 
-            boolean allRoomsOccupied = checkAllRoomsOccupied(hotelEntity);
-            if (allRoomsOccupied) {
-                hotelEntity.setStatus("Cheio");
-                repository.save(hotelEntity);
-            } else {
-                hotelEntity.setStatus("Disponível");
-                repository.save(hotelEntity);
-            }
+        boolean allRoomsOccupied = checkAllRoomsOccupied(hotelEntity);
+        if (allRoomsOccupied) {
+            hotelEntity.setStatus("Cheio");
+            repository.save(hotelEntity);
+        } else {
+            hotelEntity.setStatus("Disponível");
+            repository.save(hotelEntity);
+        }
 
-            if (room == null) {
-                throw new ResourceNotFoundException("Quarto indisponivel");
-            }
+        if (room == null) {
+            throw new ResourceNotFoundException("Quarto indisponivel");
+        }
 
-            UserDetails entity = verificationUserExists(user.getUser());
+        UserDetails entity = verificationUserExists(user.getUser());
 
-            room.setUser((User) entity);
-            room.setCheckIn(data.getReservationDTO().getCheckIn());
-            room.setCheckOut(data.getReservationDTO().getCheckOut());
-            room.setRented(true);
+        room.setUser((User) entity);
+        room.setCheckIn(data.getReservationDTO().getCheckIn());
+        room.setCheckOut(data.getReservationDTO().getCheckOut());
+        room.setRented(true);
 
-            Rooms savedRoom = roomsRepository.save(room);
+        Rooms savedRoom = roomsRepository.save(room);
 
-            sendConfirmationEmail(data, user);
+        sendConfirmationEmail(data, user);
 
-            return new ResponseRentedRoom(savedRoom);
+        return new ResponseRentedRoom(savedRoom);
     }
 
     @Transactional()
@@ -174,16 +171,30 @@ public class HotelService {
 
 
     private void validateCheckInAndCheckOutDates(ReserveRoomsRequestDTO data) {
-        LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
-
         LocalDateTime checkIn = data.getReservationDTO().getCheckIn();
         LocalDateTime checkOut = data.getReservationDTO().getCheckOut();
 
-        // Verificar se as datas de check-in e check-out são no futuro
-        if (!checkIn.isAfter(now) || !checkOut.isAfter(now)) {
-            throw new InvalidReservationDateException("A data de check-in ou check-out é inválida. Ambas devem ser no futuro ou presente!.");
+        ZonedDateTime checkInUtc = checkIn.atZone(ZoneOffset.UTC).truncatedTo(ChronoUnit.MINUTES);
+        ZonedDateTime checkOutUtc = checkOut.atZone(ZoneOffset.UTC).truncatedTo(ChronoUnit.MINUTES);
+        ZonedDateTime nowUtc = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.MINUTES);
+
+        // Validar se o check-in não está no passado
+        if (checkInUtc.isBefore(nowUtc)) {
+            throw new InvalidReservationDateException("A data de check-in é inválida. Deve ser no futuro ou presente!");
+        }
+
+        // Validar se o check-out não está no passado
+        if (checkOutUtc.isBefore(nowUtc)) {
+            throw new InvalidReservationDateException("A data de check-out é inválida. Deve ser no futuro ou presente!");
+        }
+
+        // Validar se o check-out é após o check-in
+        if (checkOutUtc.isBefore(checkInUtc)) {
+            throw new InvalidReservationDateException("A data de check-out deve ser após a data de check-in!");
         }
     }
+
+
 
     private Rooms findAvailableRoomAndUpdateStatus(Hotel hotel, Long roomId) {
         List<Rooms> rooms = hotel.getListRooms();

@@ -15,14 +15,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.management.relation.Role;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserService {
-    private EmailService emailService;
+    private final EmailService emailService;
     private final UserRepository repository;
 
     private final LoginRepository loginRepository;
@@ -39,7 +38,7 @@ public class UserService {
     public UserRegistrationDTO registerUser(UserDTO data) {
 
         var user = repository.findUserByEmail(data.getEmail());
-        if (user != null) new ExistsUserException("Email já existente!");
+        if (user != null) throw new ExistsUserException("Email já existente!");
 
         if (Optional.ofNullable(data.getRole()).map(Enum::name).orElse("").isEmpty()) {
             data.setRole(UserRole.USER);
@@ -94,9 +93,8 @@ public class UserService {
         if (!list.isEmpty()) {
             return ConvertToUserDTO(list);
         } else {
-            new ResourceNotFoundException("Recurso nao encontrado");
+            throw new ResourceNotFoundException("Recurso nao encontrado");
         }
-        return null;
     }
 
     public List<ListUsersDTO> ConvertToUserDTO(List<User> listUser) {

@@ -6,8 +6,10 @@ import com.lanaVitor.Reservas.com.entities.Rooms;
 import com.lanaVitor.Reservas.com.entities.User;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 
@@ -71,11 +73,13 @@ public class Factory {
 
 
     public static ReserveRoomsRequestDTO reservationDTO() {
-        LocalDateTime checkIn = LocalDateTime.now(); // Data atual
-        LocalDateTime checkOut = LocalDateTime.now().plusDays(2).plusHours(3);
+
+         LocalDateTime checkIn = LocalDateTime.now().plusDays(1).truncatedTo(ChronoUnit.MINUTES);
+         LocalDateTime checkOut = LocalDateTime.now().plusDays(3).plusHours(3).truncatedTo(ChronoUnit.MINUTES);
+
         ReservationHotelDTO reservationHotelDTO = new ReservationHotelDTO(checkIn, checkOut, 1L);
 
-        VerificationRegisterDTO verificationRegisterDTO = new VerificationRegisterDTO(createUser().getEmail());
+        VerificationRegisterDTO verificationRegisterDTO = new VerificationRegisterDTO("testuser@example.com");
 
         return new ReserveRoomsRequestDTO(reservationHotelDTO, verificationRegisterDTO);
     }
@@ -138,5 +142,14 @@ public class Factory {
         return new User(1L, "notFound", "notFound@email.com", "password", null,null, null);
     }
 
+    public static LocalDateTime createValidCheckIn(){
+
+        return  LocalDateTime.now();
+    }
+
+    public static LocalDateTime createValidCheckOut(){
+
+        return  LocalDateTime.now().plusDays(2);
+    }
 
 }

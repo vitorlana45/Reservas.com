@@ -85,8 +85,8 @@ public class Factory {
     }
 
     public static ReserveRoomsRequestDTO reservationWithOutUserDTO() {
-        LocalDateTime checkIn = LocalDateTime.now(); // Data atual
-        LocalDateTime checkOut = LocalDateTime.now().plusDays(2).plusHours(3);
+        LocalDateTime checkIn = LocalDateTime.now().plusDays(1).truncatedTo(ChronoUnit.MINUTES); // Data atual
+        LocalDateTime checkOut = LocalDateTime.now().plusDays(3).plusHours(3).truncatedTo(ChronoUnit.MINUTES);
         ReservationHotelDTO reservationHotelDTO = new ReservationHotelDTO(checkIn, checkOut, 1L);
 
         VerificationRegisterDTO verificationRegisterDTO = new VerificationRegisterDTO(createEmailNotFoundOnDataBase().getEmail());

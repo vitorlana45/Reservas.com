@@ -171,12 +171,14 @@ public class HotelService {
 
 
     private void validateCheckInAndCheckOutDates(ReserveRoomsRequestDTO data) {
+        ZonedDateTime nowUtc = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.MINUTES);
         LocalDateTime checkIn = data.getReservationDTO().getCheckIn();
         LocalDateTime checkOut = data.getReservationDTO().getCheckOut();
 
         ZonedDateTime checkInUtc = checkIn.atZone(ZoneOffset.UTC).truncatedTo(ChronoUnit.MINUTES);
         ZonedDateTime checkOutUtc = checkOut.atZone(ZoneOffset.UTC).truncatedTo(ChronoUnit.MINUTES);
-        ZonedDateTime nowUtc = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.MINUTES);
+
+
 
         // Validar se o check-in não está no passado
         if (checkInUtc.isBefore(nowUtc)) {

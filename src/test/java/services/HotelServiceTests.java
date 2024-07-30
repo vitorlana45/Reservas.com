@@ -67,7 +67,7 @@ public class HotelServiceTests {
 
     private String emailNotFoundOnDataBase;
 
-    private ReserveRoomsRequestDTO notFoundReservationDTO;
+    private ReserveRoomsRequestDTO nonExistsUser;
 
 
     private long hotelEntityOccupied;
@@ -99,7 +99,7 @@ public class HotelServiceTests {
         hotelEntityOccupied = 5L;
         nonExistingId = 100L;
         emailNotFoundOnDataBase = Factory.emailNotFoundReservationDTO().getUser().getEmail();
-        notFoundReservationDTO = Factory.emailNotFoundReservationDTO();
+        nonExistsUser = Factory.emailNotFoundReservationDTO();
         hotelEmptyRooms = Factory.createRoomsOccupied();
         rooms = Factory.createRoom();
         hotelDTO = Factory.createHotelDTO();
@@ -126,16 +126,15 @@ public class HotelServiceTests {
     public void reserveRoomShouldReturnEntityNotFoundExceptionWhenUserNonExists() {
 
 
-        ReserveRoomsRequestDTO nonExistUser = reservationWithOutUserDTO();
+        ReserveRoomsRequestDTO reservationDTONonExistUser = reservationWithOutUserDTO();
 
-        Mockito.doThrow(EntityNotFoundException.class).when(userRepository).findUserByEmail(nonExistUser.getUser().getEmail());
+        Mockito.doThrow(EntityNotFoundException.class).when(userRepository).findUserByEmail(reservationDTONonExistUser.getUser().getEmail());
 
-        Assertions.assertThrows(EntityNotFoundException.class, () -> service.reserveRoom(notFoundReservationDTO, hotelDTO.getId(), nonExistUser));
+        Assertions.assertThrows(EntityNotFoundException.class, () -> service.reserveRoom(requestDTO, hotelDTO.getId(), reservationDTONonExistUser));
     }
     @Test
     @DisplayName("Reserve room should book the room when it becomes available")
     public void reserveRoomShouldBookTheRoomWhenItBecomesAvailable() {
-
 
         var userDTO = requestDTO.getUser().getEmail();
         Mockito.when(userRepository.findUserByEmail(userDTO)).thenReturn(createUser);

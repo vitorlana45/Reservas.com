@@ -26,6 +26,7 @@ public class Hotel {
     @Setter
     private String description;
     @Setter
+    @Column(length = 30)
     private String status;
 
     @Getter

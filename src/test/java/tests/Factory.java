@@ -71,7 +71,6 @@ public class Factory {
         return hotels;
     }
 
-
     public static ReserveRoomsRequestDTO reservationDTO() {
 
          LocalDateTime checkIn = LocalDateTime.now().plusDays(1).truncatedTo(ChronoUnit.MINUTES);

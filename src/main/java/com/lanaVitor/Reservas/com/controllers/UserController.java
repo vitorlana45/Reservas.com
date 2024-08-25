@@ -26,6 +26,7 @@ import java.util.List;
 
 @Validated
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/users")
 public class UserController {
 
@@ -48,6 +49,7 @@ public class UserController {
 
     @PostMapping("/register")
     @Operation(summary = "cadastro de novos usuários", description = "cadastro de novos usuários")
+
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "A requisição foi executada com secusso."),
             @ApiResponse(responseCode = "422", description = "Recurso Indisponivel, Unprocessable Entity "),

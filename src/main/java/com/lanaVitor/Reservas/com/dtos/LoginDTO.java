@@ -1,14 +1,11 @@
 package com.lanaVitor.Reservas.com.dtos;
 
-
 import com.lanaVitor.Reservas.com.entities.Login;
 import jakarta.validation.constraints.Email;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDateTime;
-import java.util.Random;
-
 
 @Data
 @NoArgsConstructor

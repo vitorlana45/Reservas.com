@@ -26,7 +26,7 @@ import java.util.List;
 
 @Validated
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {"http://localhost:4200","https://reservas-five.vercel.app"})
 @RequestMapping("/users")
 public class UserController {
 

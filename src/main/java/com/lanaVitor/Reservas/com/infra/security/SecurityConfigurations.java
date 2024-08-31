@@ -47,7 +47,7 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.DELETE, "/resort/restoreRoom").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/resort/{id}/reserve").hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "resort/available/**").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/webjars/**", "/swagger-resources/**", "health/status").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/webjars/**", "/swagger-resources/**", "/health/status").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

@@ -1,10 +1,12 @@
 package com.lanaVitor.Reservas.com;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableAsync;
 
+@AutoConfiguration
 @SpringBootApplication
 @EnableAsync
 @EnableCaching

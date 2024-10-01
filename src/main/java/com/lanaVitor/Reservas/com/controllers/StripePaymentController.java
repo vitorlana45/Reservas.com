@@ -6,7 +6,7 @@ import com.stripe.exception.StripeException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
-
+@CrossOrigin(origins = "https://reservas-five.vercel.app", allowCredentials = "true")
 @RestController
 @RequestMapping("/api/checkout")
 public class StripePaymentController {

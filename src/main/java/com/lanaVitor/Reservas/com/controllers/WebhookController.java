@@ -4,6 +4,7 @@ import com.lanaVitor.Reservas.com.services.WebhookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin({"https://reservas-five.vercel.app","https://reservas-44eh.onrender.com"})
 @RestController
 @RequestMapping("/webhook")
 public class WebhookController {

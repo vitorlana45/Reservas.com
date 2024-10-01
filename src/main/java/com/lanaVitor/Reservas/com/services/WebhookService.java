@@ -80,6 +80,7 @@ public class WebhookService {
         }
     }
 
+    @Transactional
     public void saveUserInRoom(String userEmail, LocalDateTime checkIn, LocalDateTime checkOut) {
         User user = userService.findUserByEmail(userEmail);
         Hotel hotel = hotelService.searchHotelById(1L);
@@ -98,7 +99,6 @@ public class WebhookService {
         if (!hotel.getUserList().contains(user)) {
             hotel.getUserList().add(user);
         }
-
         hotelService.saveHotel(hotel);
     }
 }

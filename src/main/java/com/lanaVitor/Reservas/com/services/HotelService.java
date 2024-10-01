@@ -243,7 +243,8 @@ public class HotelService {
         return entity;
     }
 
-    private UserDetails verificationUserExists(VerificationRegisterDTO data) {
+    @Transactional(readOnly = true)
+    protected UserDetails verificationUserExists(VerificationRegisterDTO data) {
         try {
             return userRepository.findUserByEmail(data.getEmail());
         } catch (RuntimeException e) {
@@ -251,10 +252,11 @@ public class HotelService {
         }
     }
     // metodos para outros services poderem consumir sem precisar de injetar o hotelRepository
+    @Transactional(readOnly = true)
     public Hotel searchHotelById(long id){
         return hotelRepository.searchHotelById(id);
     }
-
+    @Transactional
     public void saveHotel(Hotel hotel){
         hotelRepository.save(hotel);
     }

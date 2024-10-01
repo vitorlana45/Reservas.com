@@ -5,15 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Fetch;
 
 import java.util.*;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@Table(name = "tb_hotel")
+@Entity(name = "tb_hotel")
 public class Hotel {
 
     @Id
@@ -34,7 +32,7 @@ public class Hotel {
     @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Rooms> listRooms = new ArrayList<>();
 
-    @OneToMany
+    @OneToMany(cascade={CascadeType.ALL, CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(
             name = "tb_hotel_user",
             joinColumns = @JoinColumn(name = "hotel_id"),

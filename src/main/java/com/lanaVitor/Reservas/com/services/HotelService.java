@@ -29,6 +29,7 @@ import java.util.Optional;
 public class HotelService {
 
     private static final Integer limitQuantityRoom = 10;
+    private final HotelRepository hotelRepository;
 
     private HotelRepository repository;
     private UserRepository userRepository;
@@ -38,11 +39,12 @@ public class HotelService {
     int capturedRoomNumber;
 
     @Autowired
-    public HotelService(HotelRepository repository, UserRepository userRepository, RoomsRepository roomsRepository, EmailService emailService, WebApplicationContext webApplicationContext) {
+    public HotelService(HotelRepository repository, UserRepository userRepository, RoomsRepository roomsRepository, EmailService emailService, WebApplicationContext webApplicationContext, HotelRepository hotelRepository) {
         this.repository = repository;
         this.userRepository = userRepository;
         this.roomsRepository = roomsRepository;
         this.emailService = emailService;
+        this.hotelRepository = hotelRepository;
     }
 
     @Transactional
@@ -125,7 +127,9 @@ public class HotelService {
         }
 
         if (room == null) {
-            throw new ResourceNotFoundException("Quarto indisponivel");
+            var newRoom = new Rooms();
+            room = roomsRepository.save(newRoom);
+//          throw new ResourceNotFoundException("Quarto indisponivel");
         }
 
         UserDetails entity = verificationUserExists(user.getUser());
@@ -179,7 +183,6 @@ public class HotelService {
         ZonedDateTime checkOutUtc = checkOut.atZone(ZoneOffset.UTC).truncatedTo(ChronoUnit.MINUTES);
 
 
-
         // Validar se o check-in não está no passado
         if (checkInUtc.isBefore(nowUtc)) {
             throw new InvalidReservationDateException("A data de check-in é inválida. Deve ser no futuro ou presente!");
@@ -219,12 +222,7 @@ public class HotelService {
 
     private void sendConfirmationEmail(ReserveRoomsRequestDTO reservationData, ReserveRoomsRequestDTO userData) {
         String totalPrice = UtilService.calculateTotalPrice(reservationData.getReservationDTO().getCheckIn(), reservationData.getReservationDTO().getCheckOut());
-        User user = (User) verificationUserExists(userData.getUser());
-        if (user != null) {
-            emailService.sendEmailText(userData.getUser().getEmail(), "Confirmação de reserva", totalPrice);
-        } else {
-            throw new ResourceNotFoundException("para reservar um quarto e nescessario ter cadastro!");
-        }
+        emailService.sendEmailText(userData.getUser().getEmail(), "Confirmação de reserva", totalPrice);
     }
 
     private Hotel convertToCreateHotelDTO(CreateHotelDTO entity) {
@@ -251,5 +249,13 @@ public class HotelService {
         } catch (RuntimeException e) {
             throw new EntityNotFoundException("É necessario ter cadastro para reservar um quarto");
         }
+    }
+    // metodos para outros services poderem consumir sem precisar de injetar o hotelRepository
+    public Hotel searchHotelById(long id){
+        return hotelRepository.searchHotelById(id);
+    }
+
+    public void saveHotel(Hotel hotel){
+        hotelRepository.save(hotel);
     }
 }

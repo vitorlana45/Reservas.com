@@ -1,13 +1,8 @@
 package com.lanaVitor.Reservas.com.entities;
 
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Setter
 @ToString
@@ -15,34 +10,27 @@ import java.util.Date;
 @AllArgsConstructor
 @Getter
 @Entity(name = "tb_rooms")
-@Table(name = "tb_rooms")
-public class Rooms implements Serializable {
+public class Rooms {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private Integer roomsNumber;
-
     private LocalDateTime checkIn;
     private LocalDateTime checkOut;
 
     @Getter
     private boolean rented;
 
-    @Setter
-    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @ManyToOne
     @JoinColumn(name = "hotel_id")
     private Hotel hotel;
 
-    @ManyToOne
-    @JsonIgnore
-    private User user;
-
-
     public boolean isAvailable() {
         return !rented;
     }
-
 }

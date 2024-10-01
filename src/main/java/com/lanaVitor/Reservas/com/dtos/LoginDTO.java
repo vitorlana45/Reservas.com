@@ -18,12 +18,10 @@ public class LoginDTO {
     @Email(message = "deve ser um endereço de e-mail valido, verifique os dados novamente!")
     private String email;
     private String password;
-    private LocalDateTime loginMoment;
 
     public LoginDTO(Login entity) {
         id = entity.getId();
-        email = entity.getEmail();
-        password = entity.getPassword();
-        this.loginMoment = LocalDateTime.now();
+        email = entity.getUser().getEmail();
+        password = entity.getUser().getPassword();
     }
 }

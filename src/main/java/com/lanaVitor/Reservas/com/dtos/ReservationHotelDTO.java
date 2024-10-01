@@ -17,6 +17,6 @@ import java.util.List;
 public class ReservationHotelDTO {
     private LocalDateTime checkIn;
     private LocalDateTime checkOut;
-    private Long numberRoom ;
+    private Long numberRoom;
 
 }

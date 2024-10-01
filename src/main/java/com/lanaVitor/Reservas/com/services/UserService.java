@@ -4,17 +4,22 @@ import com.lanaVitor.Reservas.com.dtos.*;
 import com.lanaVitor.Reservas.com.entities.Login;
 import com.lanaVitor.Reservas.com.entities.User;
 import com.lanaVitor.Reservas.com.entities.UserRole;
+import com.lanaVitor.Reservas.com.infra.security.TokenService;
 import com.lanaVitor.Reservas.com.repositories.LoginRepository;
 import com.lanaVitor.Reservas.com.repositories.UserRepository;
 import com.lanaVitor.Reservas.com.services.exception.ExistsUserException;
 import com.lanaVitor.Reservas.com.services.exception.ResourceNotFoundException;
 import com.lanaVitor.Reservas.com.services.exception.noExistsUserException;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -23,15 +28,21 @@ import java.util.Optional;
 public class UserService {
     private final EmailService emailService;
     private final UserRepository repository;
-
+    private final AuthenticationManager authenticationManager;
+    private final TokenService tokenService;
     private final LoginRepository loginRepository;
 
 
     @Autowired
-    public UserService(EmailService emailService, UserRepository repository,LoginRepository loginRepository) {
+    public UserService(EmailService emailService, UserRepository repository,LoginRepository loginRepository,
+                       AuthenticationManager authenticationManager, TokenService tokenService) {
+
         this.emailService = emailService;
         this.repository = repository;
         this.loginRepository =loginRepository;
+        this.authenticationManager = authenticationManager;
+        this.tokenService = tokenService;
+
     }
 
     @Transactional
@@ -54,8 +65,16 @@ public class UserService {
         return new UserRegistrationDTO(entity);
     }
 
-    public void saveLogin(LoginDTO data) {
-        loginRepository.save(new Login(data));
+    @Transactional
+    public String validateLogin(@Valid LoginDTO data) {
+        var usernamePassword = new UsernamePasswordAuthenticationToken(data.getEmail(), data.getPassword());
+        var auth = this.authenticationManager.authenticate(usernamePassword);
+        var token = tokenService.generateToken((User) auth.getPrincipal());
+
+        if(token != null){
+            loginRepository.save(new Login(null, (User) auth.getPrincipal(), LocalDateTime.now()));
+        }
+       return token;
     }
 
     @Transactional()
@@ -110,4 +129,11 @@ public class UserService {
         }
         return listDTO;
     }
+
+//    metodo para outros services utilizarem sem precisar injetar o repository neles
+    public User findUserByEmail(String email) {
+        return repository.searchUserByEmail(email);
+    }
+
+
 }

@@ -1,6 +1,5 @@
 package com.lanaVitor.Reservas.com.services.util;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -10,7 +9,7 @@ import java.util.Date;
 
 public class UtilService {
 
-    private static final double PRICE_PER_DAY = 85;
+    private static final double PRICE_PER_DAY = 100;
 
     public static String calculateTotalPrice(LocalDateTime checkIn, LocalDateTime checkOut) {
 

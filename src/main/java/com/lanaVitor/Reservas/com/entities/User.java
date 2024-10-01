@@ -19,7 +19,6 @@ import java.util.Objects;
 @NoArgsConstructor
 @Getter
 @Entity(name = "tb_users")
-@Table(name = "tb_users")
 public class User implements UserDetails {
 
     @Id
@@ -35,8 +34,8 @@ public class User implements UserDetails {
 
     private UserRole role;
 
-
-    @ManyToOne
+    @Setter
+    @ManyToOne(cascade={CascadeType.ALL, CascadeType.MERGE, CascadeType.PERSIST})
     private Hotel hotel;
 
     @OneToMany

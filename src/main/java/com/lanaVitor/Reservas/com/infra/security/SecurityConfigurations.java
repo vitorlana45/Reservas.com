@@ -39,6 +39,8 @@ public class SecurityConfigurations {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/users/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/checkout/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/webhook/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/resort/create/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/resort/{id}/addRoom").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/users/find/**").hasRole("ADMIN")

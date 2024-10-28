@@ -10,3 +10,28 @@ jobs:
         steps:
             - name: Checkout code
               uses: actions/checkout@v3
+
+            - name: Set up JDK 17
+              uses: actions/setup-java@v3
+              with:
+#                adopt é uma distribuição do JDK 17 que é mantida pela AdoptOpenJDK OPEN SOURCE
+                distribution: 'adopt'
+                java-version: '17'
+
+            - name: Cache Maven packages
+              uses: actions/cache@v3
+              with:
+                path: ~/.m2/repository
+                key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+                restore-keys: | 
+                  ${{ runner.os }}-maven-
+
+            - name: Run unit Tests
+              run: mvn test
+
+#              Local de relatórios de testes
+            - name: Archive test results
+              uses: actions/upload-artifact@v3
+              with:
+                name: test-results
+                path: target/surefire-reports

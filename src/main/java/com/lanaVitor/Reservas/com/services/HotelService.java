@@ -31,10 +31,10 @@ public class HotelService {
     private static final Integer limitQuantityRoom = 10;
     private final HotelRepository hotelRepository;
 
-    private HotelRepository repository;
-    private UserRepository userRepository;
-    private RoomsRepository roomsRepository;
-    private EmailService emailService;
+    private final HotelRepository repository;
+    private final UserRepository userRepository;
+    private final RoomsRepository roomsRepository;
+    private final EmailService emailService;
 
     int capturedRoomNumber;
 
@@ -198,8 +198,6 @@ public class HotelService {
             throw new InvalidReservationDateException("A data de check-out deve ser após a data de check-in!");
         }
     }
-
-
 
     private Rooms findAvailableRoomAndUpdateStatus(Hotel hotel, Long roomId) {
         List<Rooms> rooms = hotel.getListRooms();

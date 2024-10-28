@@ -29,15 +29,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import tests.Factory;
 
 
-import javax.swing.text.GapContent;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static tests.Factory.reservationWithOutUserDTO;
 
@@ -132,6 +127,7 @@ public class HotelServiceTests {
 
         Assertions.assertThrows(EntityNotFoundException.class, () -> service.reserveRoom(requestDTO, hotelDTO.getId(), reservationDTONonExistUser));
     }
+
     @Test
     @DisplayName("Reserve room should book the room when it becomes available")
     public void reserveRoomShouldBookTheRoomWhenItBecomesAvailable() {
@@ -159,7 +155,8 @@ public class HotelServiceTests {
         when(roomsRepository.save(emptyRoom)).thenThrow(ResourceNotFoundException.class);
         when(repository.findById(hotelEntityOccupied)).thenReturn(Optional.of(hotelEmptyRooms));
 
-        Assertions.assertThrows(ResourceNotFoundException.class, () -> service.reserveRoom(requestDTO, hotelEntityOccupied, requestDTO));
+
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> service.reserveRoom(requestDTO, nonExistingId, requestDTO));
     }
 
     @Test

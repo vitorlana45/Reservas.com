@@ -10,7 +10,6 @@ import com.lanaVitor.Reservas.com.repositories.UserRepository;
 import com.lanaVitor.Reservas.com.services.exception.ExistsUserException;
 import com.lanaVitor.Reservas.com.services.exception.ResourceNotFoundException;
 import com.lanaVitor.Reservas.com.services.exception.noExistsUserException;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,6 +17,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -77,7 +77,7 @@ public class UserService {
        return token;
     }
 
-    @Transactional()
+    @Transactional(readOnly = true)
     public UserRegistrationDTO findById(Long id) {
         User user = repository.findById(id).orElseThrow(() -> new noExistsUserException("Usuário não existente"));
         return new UserRegistrationDTO(user);
@@ -107,6 +107,7 @@ public class UserService {
         else repository.deleteById(entity.get().getId());
     }
 
+    @Transactional(readOnly = true)
     public List<ListUsersDTO> findAllUsers() {
         var list = repository.findAll();
         if (!list.isEmpty()) {
@@ -131,9 +132,9 @@ public class UserService {
     }
 
 //    metodo para outros services utilizarem sem precisar injetar o repository neles
+    @Transactional(readOnly = true)
     public User findUserByEmail(String email) {
         return repository.searchUserByEmail(email);
     }
-
 
 }

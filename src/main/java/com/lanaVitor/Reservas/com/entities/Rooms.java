@@ -22,7 +22,7 @@ public class Rooms {
     @Getter
     private boolean rented;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
 

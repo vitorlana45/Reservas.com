@@ -108,7 +108,7 @@ public class HotelService {
     }
 
     @Transactional
-    public ResponseRentedRoom reserveRoom(ReserveRoomsRequestDTO data, Long hotelId, ReserveRoomsRequestDTO user) {
+    public void reserveRoom(ReserveRoomsRequestDTO data, Long hotelId, ReserveRoomsRequestDTO user) {
 
         validateCheckInAndCheckOutDates(data);
 
@@ -142,8 +142,6 @@ public class HotelService {
         Rooms savedRoom = roomsRepository.save(room);
 
         sendConfirmationEmail(data, user);
-
-        return new ResponseRentedRoom(savedRoom);
     }
 
     @Transactional()

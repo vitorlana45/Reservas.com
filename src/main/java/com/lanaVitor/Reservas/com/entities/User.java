@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -38,7 +39,8 @@ public class User implements UserDetails {
     @ManyToOne(cascade={CascadeType.ALL, CascadeType.MERGE, CascadeType.PERSIST})
     private Hotel hotel;
 
-    @OneToMany
+
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "tb_users_rooms",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "rooms_id"))

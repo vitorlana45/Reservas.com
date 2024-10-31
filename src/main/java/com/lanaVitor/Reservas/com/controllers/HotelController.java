@@ -7,10 +7,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -64,9 +66,10 @@ public class HotelController {
             @ApiResponse(responseCode = "200", description = "A requisição foi executada com sucesso."),
             @ApiResponse(responseCode = "404", description = "Recurso não encontrado")})
     @PostMapping("/{id}/reserve")
-    public ResponseEntity<ResponseRentedRoom> reserveRooms(@PathVariable Long id, @RequestBody ReserveRoomsRequestDTO requestDTO) {
-        ResponseRentedRoom data = hotelService.reserveRoom(requestDTO, id, requestDTO);
-        return ResponseEntity.ok().body(data);
+    public ResponseEntity<Void> reserveRooms(@PathVariable Long id, @RequestBody ReserveRoomsRequestDTO requestDTO) {
+       hotelService.reserveRoom(requestDTO, id, requestDTO);
+       URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
+        return ResponseEntity.created(uri).build();
     }
 
     @PreAuthorize("hasRole('ADMIN')")

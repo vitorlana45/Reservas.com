@@ -12,6 +12,7 @@ import com.lanaVitor.Reservas.com.services.exception.ResourceNotFoundException;
 import com.lanaVitor.Reservas.com.services.util.UtilService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,20 +74,23 @@ public class HotelService {
     }
 
     @Transactional(readOnly = true)
-    public HotelDTO searchAllRooms(Long id) {
+    public Page<HotelDTO> searchAllRooms(Long id, Pageable pageable) {
 
-        Optional<Hotel> hotelOptional = repository.findById(id);
-        Hotel hotelEntity = hotelOptional.orElseThrow(() -> new ResourceNotFoundException("Hotel não encontrado"));
+        Hotel hotel = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Hotel não encontrado"));
 
-        List<Rooms> listRooms = hotelEntity.getListRooms();
+        List<Rooms> listRooms = hotel.getListRooms();
 
         for (Rooms room : listRooms) {
             if (room.isAvailable() && room.getUser() == null) { // método isAvailable() para verificar a disponibilidade
-                HotelDTO hotelDTO = new HotelDTO(hotelEntity);
+                HotelDTO hotelDTO = new HotelDTO(hotel);
                 hotelDTO.getRooms().add(new RoomsDTO(room)); // Adiciona o quarto disponível ao DTO do hotel
             }
         }
-        return new HotelDTO(hotelEntity);
+
+        List<HotelDTO> hotelDTO = new ArrayList<>();
+        hotelDTO.add(new HotelDTO(hotel));
+
+        return new PageImpl<>(hotelDTO, pageable,listRooms.size() );
     }
 
     @Transactional

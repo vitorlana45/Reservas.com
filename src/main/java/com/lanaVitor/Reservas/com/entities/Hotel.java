@@ -1,5 +1,6 @@
 package com.lanaVitor.Reservas.com.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,6 +33,7 @@ public class Hotel {
     @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Rooms> listRooms = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(cascade={CascadeType.ALL, CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(
             name = "tb_hotel_user",

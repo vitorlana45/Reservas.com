@@ -1,12 +1,14 @@
 package com.lanaVitor.Reservas.com.controllers;
 
 import com.lanaVitor.Reservas.com.dtos.*;
+import com.lanaVitor.Reservas.com.entities.Hotel;
 import com.lanaVitor.Reservas.com.services.HotelService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.*;
 import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -43,8 +45,8 @@ public class HotelController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "A requisição foi executada com sucesso."),
             @ApiResponse(responseCode = "404", description = "Recurso não encontrado")})
-    public ResponseEntity<HotelDTO> findAllRooms(@PathVariable Long id) {
-        HotelDTO list = hotelService.searchAllRooms(id);
+    public ResponseEntity<Page<HotelDTO>> findAllRooms(@PathVariable Long id, Pageable pageable) {
+        Page<HotelDTO> list = hotelService.searchAllRooms(id,pageable);
         return ResponseEntity.ok().body(list);
     }
 
@@ -98,5 +100,4 @@ public class HotelController {
 
         return ResponseEntity.ok().build();
     }
-
 }

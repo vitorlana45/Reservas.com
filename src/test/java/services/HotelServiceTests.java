@@ -25,6 +25,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.cglib.core.Local;
+import org.springframework.data.domain.*;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import tests.Factory;
 
@@ -177,13 +178,17 @@ public class HotelServiceTests {
     public void availableRoomsShouldReturnRoomListWhenResortIdExists() {
         // Arrange
 
+        PageRequest pageRequest = PageRequest.of(0, 10);
         Optional<Hotel> hotelEntity = repository.findById(existingId);
+        when(repository.findById(existingId)).thenReturn(Optional.of(hotel));
 
         // Act
-        HotelDTO actualRooms = service.searchAllRooms(existingId);
+        Page<HotelDTO> result = service.searchAllRooms(existingId, pageRequest);
 
         // Assert
-        Assertions.assertNotNull(actualRooms);
+        Assertions.assertFalse(result.isEmpty());
+        Assertions.assertEquals(0, result.getNumber());
+        Assertions.assertEquals(10, result.getSize());
         Assertions.assertTrue(hotelEntity.isPresent());
 
     }
@@ -192,7 +197,9 @@ public class HotelServiceTests {
     @DisplayName("searchAvailableRooms should return ResourceNotFoundException.class when id non exists")
     public void searchAvailableRoomsShouldReturnResourceNotFoundExceptionWhenIdNonExists() {
 
-        Assertions.assertThrows(ResourceNotFoundException.class, () -> service.searchAllRooms(nonExistingId));
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> service.searchAllRooms(nonExistingId, pageRequest));
     }
 
     @Test

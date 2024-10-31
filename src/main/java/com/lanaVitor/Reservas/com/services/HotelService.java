@@ -137,10 +137,14 @@ public class HotelService {
         room.setUser((User) entity);
         room.setCheckIn(data.getReservationDTO().getCheckIn());
         room.setCheckOut(data.getReservationDTO().getCheckOut());
+        room.setRoomsNumber(Integer.parseInt(String.valueOf(room.getId())));
         room.setRented(true);
 
-        Rooms savedRoom = roomsRepository.save(room);
 
+        hotelEntity.getListRooms().add(room);
+        repository.save(hotelEntity);
+        room.setHotel(hotelEntity);
+        roomsRepository.save(room);
         sendConfirmationEmail(data, user);
     }
 
